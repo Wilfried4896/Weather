@@ -10,19 +10,21 @@ import SnapKit
 
 class SearchPageView: UIView {
 
+    var weatherData = [DataHours]()
+    
     lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.delegate = self
         return searchBar
     }()
     
-    var weatherData = [DataHours]()
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         addSubview(searchBar)
-        //print(weatherData.count)
+
         searchBar.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
         }

@@ -1,14 +1,8 @@
-//
-//  AppCoordinator.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 30.11.2022.
-//
 
 import UIKit
+import CoreLocation
 
-class AppCoordinator: Coordinator {
-    
+class AppCoordinator: Coordinator, LocationCoordinateDelegate {
     var window: UIWindow?
     var navigation: UIViewController?
     var childrenCoordinators: [Coordinator] = []
@@ -32,11 +26,11 @@ class AppCoordinator: Coordinator {
         onboardingCoord.start()
     }
     
-    func homePage() {
+    func didTapToKnowCoordinate(locationCoordinate: CLLocation?) {
         navigation = UINavigationController()
         window?.rootViewController = navigation
         
-        let homePageCoordiantor = HomePageCoordinator(navigation: navigation as! UINavigationController)
+        let homePageCoordiantor = HomePageCoordinator(navigation: navigation as! UINavigationController, coreLocation: locationCoordinate)
         homePageCoordiantor.parent = self
         childrenCoordinators.append(homePageCoordiantor)
         homePageCoordiantor.start()

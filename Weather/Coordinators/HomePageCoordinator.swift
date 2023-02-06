@@ -1,9 +1,3 @@
-//
-//  HomePageCoordinator.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 30.11.2022.
-//
 
 import UIKit
 import CoreLocation
@@ -17,9 +11,11 @@ class HomePageCoordinator: Coordinator, HomePageDelegate {
     weak var parent: AppCoordinator?
     var childrenCoordinators: [Coordinator] = []
     var navigation: UINavigationController
+    var coreLocation: CLLocation?
     
-    init(navigation: UINavigationController) {
+    init(navigation: UINavigationController, coreLocation: CLLocation?) {
         self.navigation = navigation
+        self.coreLocation = coreLocation
     }
     
     func start() {
@@ -29,13 +25,14 @@ class HomePageCoordinator: Coordinator, HomePageDelegate {
     func homePageVC() {
         let vc = HomePageController()
         vc.coordinator = self
+        vc.locationCordinates = coreLocation
         navigation.pushViewController(vc, animated: true)
     }
     
     func paramatrPage() {
         let vc = ParameterController()
         vc.coordinator = self
-        navigation.present(vc, animated: true)
+        navigation.pushViewController(vc, animated: true)
     }
     
     func detailDay() {
@@ -47,7 +44,7 @@ class HomePageCoordinator: Coordinator, HomePageDelegate {
     func indexPathSelect(indexS: IndexPath) {
         let vc = DetailDayForecastController()
         vc.coordinator = self
-        vc.indexSelect = indexS.item
+        vc.indexSelect = indexS.row
         navigation.pushViewController(vc, animated: true)
     }
 }

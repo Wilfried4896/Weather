@@ -1,9 +1,3 @@
-//
-//  DetailDayForecastController.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 04.12.2022.
-//
 
 import UIKit
 import SnapKit
@@ -19,15 +13,6 @@ class DetailDayForecastController: UIViewController {
             }
         }
     }
-    
-    lazy var buttonBar: NavigationBarCustom = {
-        let button = NavigationBarCustom(title: "Дневная погода")
-        button.snp.makeConstraints { make in
-            make.width.equalTo(200)
-           // make.height.equalTo(20)
-        }
-        return button
-    }()
     
     lazy var tableView: UITableView = {
         let tableview = UITableView(frame: .zero, style: .grouped)
@@ -57,10 +42,7 @@ class DetailDayForecastController: UIViewController {
         view.backgroundColor = .systemBackground
         view.addSubview(tableView)
         
-        let barButton = UIBarButtonItem(customView: buttonBar)
-        navigationItem.leftBarButtonItem = barButton
-
-        actionButton()
+        navigationItem.leftBarButtonItem = UIBarButtonItem.menuButton(self, action: #selector(actionButton), imageName: "Arrow 2", titleName: "\tДневная погода", color: .black)
         
         if let getForBundle = getForBundle() {
             dataDayH = getForBundle.data
@@ -87,18 +69,15 @@ class DetailDayForecastController: UIViewController {
         return nil
     }
     
-    private func actionButton() {
-        buttonBar.actionButton = {
-            self.navigationController?.popViewController(animated: true)
-        }
+    @objc private func actionButton() {
+        navigationController?.popViewController(animated: true)
     }
     
 }
 
 extension DetailDayForecastController: UITableViewDelegate, UITableViewDataSource, DateShowDelegate {
-    
     func indexDelected(indexSelected: IndexPath) {
-        indexSelect = indexSelected.item
+        indexSelect = indexSelected.row
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -142,7 +121,6 @@ extension DetailDayForecastController: UITableViewDelegate, UITableViewDataSourc
             return cell
         case 4:
             let cell = tableView.dequeueReusableCell(withIdentifier: AirQualityTableCell.shared, for: indexPath) as! AirQualityTableCell
-            
             return cell
         default:
             return tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)

@@ -1,9 +1,3 @@
-//
-//  File.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 04.12.2022.
-//
 
 import UIKit
 

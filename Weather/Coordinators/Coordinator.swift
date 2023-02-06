@@ -1,9 +1,3 @@
-//
-//  Coordinator.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 30.11.2022.
-//
 
 protocol Coordinator: AnyObject {
     var childrenCoordinators: [Coordinator] { get set }

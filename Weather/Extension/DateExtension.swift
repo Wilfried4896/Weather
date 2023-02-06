@@ -1,9 +1,3 @@
-//
-//  DateExtension.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 05.12.2022.
-//
 
 import UIKit
 

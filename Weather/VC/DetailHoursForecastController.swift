@@ -1,9 +1,3 @@
-//
-//  DetailHoursForecastController.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 04.12.2022.
-//
 
 import UIKit
 import SnapKit
@@ -31,12 +25,7 @@ class DetailHoursForecastController: UIViewController {
         tableView.dataSource = self
         return tableView
     }()
-    
-    lazy var buttonBar: NavigationBarCustom = {
-        let button = NavigationBarCustom(title: "Прогноз на 24 часа")
-        return button
-    }()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         configurationDetailHoursForecast()
@@ -53,8 +42,7 @@ class DetailHoursForecastController: UIViewController {
     private func configurationDetailHoursForecast() {
         view.backgroundColor = .systemBackground
         
-       // let barButton = UIBarButtonItem(customView: buttonBar)
-        navigationItem.leftBarButtonItem = UIBarButtonItem.menuButton(self, action: #selector(actionButton), imageName: "Arrow 2", titleName: "Прогноз на 24 часа")
+        navigationItem.leftBarButtonItem = UIBarButtonItem.menuButton(self, action: #selector(actionButton), imageName: "Arrow 2", titleName: "\tПрогноз на 24 часа", color: .black)
         
         let controller = UIHostingController(rootView: Contients())
         guard let charts = controller.view else { return }
@@ -66,7 +54,7 @@ class DetailHoursForecastController: UIViewController {
         charts.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.leading.trailing.equalTo(view)
-            make.height.equalTo(150)
+            make.height.equalTo(140)
         }
         
         tableView.snp.makeConstraints { make in

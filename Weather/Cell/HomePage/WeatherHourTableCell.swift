@@ -39,6 +39,7 @@ class WeatherHourTableCell: UITableViewCell {
         viewLayout.scrollDirection = .horizontal
         let collection = UICollectionView(frame: .zero, collectionViewLayout: viewLayout)
         collection.register(WeatherHoursCell.self, forCellWithReuseIdentifier: WeatherHoursCell.identifier)
+        collection.showsHorizontalScrollIndicator = false
         collection.dataSource = self
         collection.delegate = self
         return collection
@@ -49,11 +50,7 @@ class WeatherHourTableCell: UITableViewCell {
         
         contentView.addSubview(collectionView)
         contentView.addSubview(moreInfoHourLabel)
-        
-        if let getForBundle = getForBundle() {
-            dataWeatherHour = getForBundle.data
-        }
-        
+
         moreInfoHourLabel.snp.makeConstraints { make in
             make.top.trailing.equalTo(contentView).inset(15)
         }
@@ -68,20 +65,6 @@ class WeatherHourTableCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func getForBundle() -> WeatherHours? {
-        if let url = Bundle.main.path(forResource: "weatherHour", ofType: "json") {
-                do {
-                    let data = try Data(contentsOf: URL(filePath: url))
-                    let decoder = JSONDecoder()
-                    let jsonData = try decoder.decode(WeatherHours.self, from: data)
-                    return jsonData
-                } catch {
-                    print("error:\(error)")
-                }
-            }
-            return nil
     }
     
     @objc func didTapMoreInfo() {

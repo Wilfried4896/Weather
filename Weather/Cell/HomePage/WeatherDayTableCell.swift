@@ -12,7 +12,6 @@ class WeatherDayTableCell: UITableViewCell {
     
     static let identifier = "WeatherDayTableCell"
     weak var delegateShowDetailDay: DateShowDelegate?
-    let notification = NotificationCenter.default
     
     var changeDay = 7 {
         didSet {
@@ -53,6 +52,7 @@ class WeatherDayTableCell: UITableViewCell {
         viewLayout.scrollDirection = .vertical
         let collection = UICollectionView(frame: .zero, collectionViewLayout: viewLayout)
         collection.register(WeatherDaysCell.self, forCellWithReuseIdentifier: WeatherDaysCell.identifier)
+        collection.showsVerticalScrollIndicator = false
         collection.dataSource = self
         collection.delegate = self
         collection.translatesAutoresizingMaskIntoConstraints = false
@@ -67,11 +67,6 @@ class WeatherDayTableCell: UITableViewCell {
         
         contentView.addSubview(collectionView)
         contentView.addSubview(stackView)
-
-        
-        if let getForBundle = getForBundle() {
-            dataWeatherDay = getForBundle.data
-        }
         
         stackView.snp.makeConstraints { make in
             make.top.trailing.leading.equalTo(contentView).inset(10)
@@ -88,20 +83,6 @@ class WeatherDayTableCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func getForBundle() -> WeatherDays? {
-        if let url = Bundle.main.path(forResource: "weatherDay", ofType: "json") {
-                do {
-                    let data = try Data(contentsOf: URL(filePath: url))
-                    let decoder = JSONDecoder()
-                    let jsonData = try decoder.decode(WeatherDays.self, from: data)
-                    return jsonData
-                } catch {
-                    print("error:\(error)")
-                }
-            }
-            return nil
-    }
-    
     @objc func didTapMoreInfo() {
         guard changeDay == 7 else {
             moreInfoDayLabel.setTitle("16 дней", for: .normal)
@@ -111,7 +92,6 @@ class WeatherDayTableCell: UITableViewCell {
         moreInfoDayLabel.setTitle("7 дней", for: .normal)
         changeDay = 16
     }
-    
 }
 
 extension WeatherDayTableCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -129,15 +109,7 @@ extension WeatherDayTableCell: UICollectionViewDataSource, UICollectionViewDeleg
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = .systemGray3
-        backgroundView.layer.cornerRadius = 10
-        let index = ["indexPath" : indexPath]
         delegateShowDetailDay?.indexDelected(indexSelected: indexPath)
-        if let cell = collectionView.cellForItem(at: indexPath) as? DateCell {
-            cell.selectedBackgroundView = backgroundView
-            //cell.dateLabel.text = ""
-        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

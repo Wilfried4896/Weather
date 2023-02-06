@@ -16,7 +16,6 @@
 		EC707E1A293DF36600E4B9E0 /* DetailsDayTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC707E19293DF36600E4B9E0 /* DetailsDayTableCell.swift */; };
 		EC70E1672940F37200832A95 /* SunMoonTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC70E1662940F37200832A95 /* SunMoonTableCell.swift */; };
 		EC70E169294125AB00832A95 /* AirQualityTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC70E168294125AB00832A95 /* AirQualityTableCell.swift */; };
-		EC7121082989A21C00C446E5 /* NavigationBarCustom.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7121072989A21C00C446E5 /* NavigationBarCustom.swift */; };
 		EC71210D298BEF1A00C446E5 /* UIBarButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC71210C298BEF1A00C446E5 /* UIBarButtonItem.swift */; };
 		EC71215C298C482400C446E5 /* CoreDataWeather.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EC71215A298C482300C446E5 /* CoreDataWeather.xcdatamodeld */; };
 		EC71215F298C48A000C446E5 /* CoreDataManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC71215E298C48A000C446E5 /* CoreDataManger.swift */; };
@@ -63,7 +62,6 @@
 		EC707E19293DF36600E4B9E0 /* DetailsDayTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsDayTableCell.swift; sourceTree = "<group>"; };
 		EC70E1662940F37200832A95 /* SunMoonTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunMoonTableCell.swift; sourceTree = "<group>"; };
 		EC70E168294125AB00832A95 /* AirQualityTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirQualityTableCell.swift; sourceTree = "<group>"; };
-		EC7121072989A21C00C446E5 /* NavigationBarCustom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NavigationBarCustom.swift; path = Weather/NavigationBarCustom.swift; sourceTree = SOURCE_ROOT; };
 		EC71210C298BEF1A00C446E5 /* UIBarButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBarButtonItem.swift; sourceTree = "<group>"; };
 		EC71215B298C482300C446E5 /* CoreDataWeather.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataWeather.xcdatamodel; sourceTree = "<group>"; };
 		EC71215E298C48A000C446E5 /* CoreDataManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManger.swift; sourceTree = "<group>"; };
@@ -229,7 +227,6 @@
 			children = (
 				ECA00F072969B3300043FEFA /* EmptyPageView.swift */,
 				ECA00F092969B9EF0043FEFA /* SearchPageView.swift */,
-				EC7121072989A21C00C446E5 /* NavigationBarCustom.swift */,
 			);
 			path = UIView;
 			sourceTree = "<group>";
@@ -363,7 +360,6 @@
 				EC6D4FE6293FDA1C009B933E /* HomeTableCell.swift in Sources */,
 				EC707E1A293DF36600E4B9E0 /* DetailsDayTableCell.swift in Sources */,
 				EC74F93E2937B1880010CDFF /* OnboardingController.swift in Sources */,
-				EC7121082989A21C00C446E5 /* NavigationBarCustom.swift in Sources */,
 				EC7C54F6293AA18E00E57387 /* WeatherHourTableCell.swift in Sources */,
 				EC74F9392937B11E0010CDFF /* AppCoordinator.swift in Sources */,
 				EC71210D298BEF1A00C446E5 /* UIBarButtonItem.swift in Sources */,

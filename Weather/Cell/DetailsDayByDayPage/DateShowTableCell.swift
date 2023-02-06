@@ -13,9 +13,11 @@ protocol DateShowDelegate: AnyObject {
 }
 
 class DateShowTableCell: UITableViewCell {
-    static let shared = "DateShowTableCell"
     
+    static let shared = "DateShowTableCell"
+    var currentSelected: IndexPath?
     weak var delegateShowDetailDay: DateShowDelegate?
+    private let notification = NotificationCenter.default
     
     var dataWeatherDay: [DataDays] = []
     
@@ -25,6 +27,7 @@ class DateShowTableCell: UITableViewCell {
         viewLayout.scrollDirection = .horizontal
         let collection = UICollectionView(frame: .zero, collectionViewLayout: viewLayout)
         collection.register(DateCell.self, forCellWithReuseIdentifier: DateCell.identifier)
+        collection.showsHorizontalScrollIndicator = false
         collection.dataSource = self
         collection.delegate = self
         return collection
@@ -32,6 +35,8 @@ class DateShowTableCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        notification.addObserver(self, selector: #selector(indexPathFromHomeVC(_:)), name: Notification.Name("indexPath"), object: nil)
         
         contentView.addSubview(collectionView)
         
@@ -43,6 +48,10 @@ class DateShowTableCell: UITableViewCell {
             make.leading.trailing.top.bottom.equalTo(contentView)
             make.height.equalTo(55)
         }
+    }
+    
+    @objc func indexPathFromHomeVC(_ notification: Notification) {
+       
     }
     
     required init?(coder: NSCoder) {
@@ -62,10 +71,9 @@ class DateShowTableCell: UITableViewCell {
             }
             return nil
     }
-    
 }
 
-extension DateShowTableCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension DateShowTableCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout  {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataWeatherDay.count
@@ -73,19 +81,21 @@ extension DateShowTableCell: UICollectionViewDataSource, UICollectionViewDelegat
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DateCell.identifier, for: indexPath) as! DateCell
+        
+        cell.backgroundColor = currentSelected?.item == indexPath.item ? .systemBlue : .white
+        cell.dateLabel.textColor = currentSelected?.item == indexPath.item ? .white : .black
+        cell.layer.cornerRadius = 10
+        
         cell.setUp(date: dataWeatherDay[indexPath.item])
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = .systemGray3
-        backgroundView.layer.cornerRadius = 10
-        
-        if delegateShowDetailDay != nil, let cell = collectionView.cellForItem(at: indexPath) as? DateCell {
-            delegateShowDetailDay?.indexDelected(indexSelected: indexPath)
-            cell.selectedBackgroundView = backgroundView
+        currentSelected = indexPath
+        if let currentSelected {
+            delegateShowDetailDay?.indexDelected(indexSelected: currentSelected)
         }
+        collectionView.reloadData()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

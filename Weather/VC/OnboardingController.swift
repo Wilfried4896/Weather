@@ -9,7 +9,7 @@ protocol LocationCoordinateDelegate: AnyObject {
 
 class OnboardingController: UIViewController {
     weak var coordinator: OnboardingCoordinator?
-    weak var delegate: LocationCoordinateDelegate?
+   // weak var delegate: LocationCoordinateDelegate?
     let type = CLLocationManager()
     
     lazy var imageView: UIImageView = {
@@ -75,7 +75,7 @@ class OnboardingController: UIViewController {
         view.addSubview(dontUserLocalizationBotton)
         
         imageView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(50)
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(35)
             make.centerX.equalTo(view)
             make.size.equalTo(180)
         }
@@ -88,27 +88,27 @@ class OnboardingController: UIViewController {
                 
         //MARK: secondTextLabel
         secondTextLabel.snp.makeConstraints { make in
-            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(30)
-            make.top.equalTo(firstTextLabel.snp.bottom).offset(50)
+            make.leading.trailing.equalTo(view).inset(30)
+            make.top.equalTo(firstTextLabel.snp.bottom).offset(40)
         }
         
         //MARK: thirdTextLabel
         thirdTextLabel.snp.makeConstraints { make in
-            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(30)
+            make.leading.trailing.equalTo(view).inset(30)
             make.top.equalTo(secondTextLabel.snp.bottom).offset(14)
         }
         
         //MARK: usedLocalizationBotton
         usedLocalizationBotton.snp.makeConstraints { make in
             make.height.equalTo(40)
-            make.top.equalTo(thirdTextLabel.snp.bottom).offset(54)
-            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(18)
+            make.top.equalTo(thirdTextLabel.snp.bottom).offset(40)
+            make.leading.trailing.equalTo(view).inset(18)
         }
         
         //MARK: dontUserLocalizationBotton
         dontUserLocalizationBotton.snp.makeConstraints { make in
-            make.trailing.equalTo(view.safeAreaLayoutGuide).inset(18)
-            make.top.equalTo(usedLocalizationBotton.snp.bottom).offset(25)
+            make.trailing.equalTo(view).inset(18)
+            make.top.equalTo(usedLocalizationBotton.snp.bottom).offset(20)
         }
     }
     
@@ -118,21 +118,21 @@ class OnboardingController: UIViewController {
             DispatchQueue.main.async {
                 switch strongeSelf.type.authorizationStatus {
                 case .restricted, .denied, .notDetermined:
-                    strongeSelf.delegate?.didTapToKnowCoordinate(locationCoordinate: nil)
+                    strongeSelf.coordinator?.parent?.didTapToKnowCoordinate(locationCoordinate: nil)
                 case .authorizedAlways, .authorizedWhenInUse:
-                    strongeSelf.delegate?.didTapToKnowCoordinate(locationCoordinate: location)
+                    strongeSelf.coordinator?.parent?.didTapToKnowCoordinate(locationCoordinate: location)
                 @unknown default:
                     fatalError()
                 }
             }
-            strongeSelf.coordinator?.parent?.homePage()
+//            strongeSelf.coordinator?.parent?.didTapToKnowCoordinate(locationCoordinate: location)
         }
     }
     
    
     @objc func didTapDontUserLocalization() {
-        delegate?.didTapToKnowCoordinate(locationCoordinate: nil)
-        coordinator?.parent?.homePage()
+        //delegate?.didTapToKnowCoordinate(locationCoordinate: nil)
+        coordinator?.parent?.didTapToKnowCoordinate(locationCoordinate: nil)
     }
 }
 

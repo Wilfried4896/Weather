@@ -7,7 +7,9 @@ class HomePageController: UIViewController {
     
     weak var coordinator: HomePageCoordinator?
     private var contentView: [UIView] = []
+    var locationCordinates: CLLocation?
     
+
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.isPagingEnabled = true
@@ -33,6 +35,7 @@ class HomePageController: UIViewController {
         tableview.register(WeatherHourTableCell.self, forCellReuseIdentifier: WeatherHourTableCell.identifier)
         tableview.register(WeatherDayTableCell.self, forCellReuseIdentifier: WeatherDayTableCell.identifier)
         tableview.estimatedRowHeight = 40
+        tableview.showsVerticalScrollIndicator = false
         tableview.rowHeight = UITableView.automaticDimension
         tableview.delegate = self
         tableview.dataSource = self
@@ -41,13 +44,15 @@ class HomePageController: UIViewController {
         return tableview
     }()
     
-    var data: [DataDays] = [] {
+    var dataWeatherDay = [DataDays]() {
         didSet {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
         }
     }
+    
+    var dataWeatherHour = [DataHours]()
     
     lazy var pageControler: UIPageControl = {
         let pageControler = UIPageControl()
@@ -86,8 +91,11 @@ class HomePageController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if let getData = getForBundle() {
-            data = getData.data
+        if let getWeatherDay = getWeatherDays() {
+            dataWeatherDay = getWeatherDay.data
+        }
+        if let getWeatherHours = getWeatherHour() {
+            dataWeatherHour = getWeatherHours.data
         }
     }
     
@@ -96,7 +104,13 @@ class HomePageController: UIViewController {
         view.backgroundColor = .systemBackground
         
         view.addSubview(scrollView)
-        contentView = [tableView, searchPageView]
+        
+        if locationCordinates != nil {
+            contentView = [tableView, searchPageView]
+        } else {
+            contentView = [emptyPageView, searchPageView]
+        }
+        
         
         contentView.forEach { view in
             scrollView.addSubview(view)
@@ -149,7 +163,21 @@ class HomePageController: UIViewController {
         }
     }
     
-    private func getForBundle() -> WeatherDays? {
+    private func getWeatherHour() -> WeatherHours? {
+        if let url = Bundle.main.path(forResource: "weatherHour", ofType: "json") {
+                do {
+                    let data = try Data(contentsOf: URL(filePath: url))
+                    let decoder = JSONDecoder()
+                    let jsonData = try decoder.decode(WeatherHours.self, from: data)
+                    return jsonData
+                } catch {
+                    print("error:\(error)")
+                }
+            }
+            return nil
+    }
+    
+    private func getWeatherDays() -> WeatherDays? {
         if let url = Bundle.main.path(forResource: "weatherDay", ofType: "json") {
                 do {
                     let data = try Data(contentsOf: URL(filePath: url))
@@ -179,7 +207,7 @@ extension HomePageController: UIScrollViewDelegate {
     }
 }
 
-extension HomePageController: UITableViewDelegate, UITableViewDataSource, DateShowDelegate, WeatherHourDelegate  {
+extension HomePageController: UITableViewDelegate, UITableViewDataSource, DateShowDelegate, WeatherHourDelegate {
     
     func didTapInfo() {
         coordinator?.detailDay()
@@ -206,18 +234,20 @@ extension HomePageController: UITableViewDelegate, UITableViewDataSource, DateSh
         switch indexPath.section {
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCell.shared, for: indexPath) as! HomeTableCell
-            cell.setUp(homePageData: data[0])
+            cell.setUp(homePageData: dataWeatherDay[0])
             return cell
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: WeatherHourTableCell.identifier, for: indexPath) as! WeatherHourTableCell
+            cell.dataWeatherHour = dataWeatherHour
             cell.delegate = self
             return cell
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: WeatherDayTableCell.identifier, for: indexPath) as! WeatherDayTableCell
             cell.delegateShowDetailDay = self
+            cell.dataWeatherDay = dataWeatherDay
             return cell
         default:
-            return tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
+            return tableView.dequeueReusableCell(withIdentifier: "", for: indexPath) as UITableViewCell
         }
     }
 }

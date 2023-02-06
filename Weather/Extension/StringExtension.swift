@@ -1,9 +1,3 @@
-//
-//  StringExtension.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 02.12.2022.
-//
 
 import UIKit
 import CoreData
