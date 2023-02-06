@@ -8,7 +8,7 @@ class HomePageController: UIViewController {
     weak var coordinator: HomePageCoordinator?
     private var contentView: [UIView] = []
     var locationCordinates: CLLocation?
-    
+    let notification = NotificationCenter.default
 
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -97,6 +97,8 @@ class HomePageController: UIViewController {
         if let getWeatherHours = getWeatherHour() {
             dataWeatherHour = getWeatherHours.data
         }
+        
+        notification.addObserver(self, selector: #selector(receivedDataFromNotificationCenter(_:)), name: NSNotification.Name("location"), object: nil)
     }
     
     private func configurationHomePage() {
@@ -189,6 +191,10 @@ class HomePageController: UIViewController {
                 }
             }
             return nil
+    }
+    
+   @objc private func receivedDataFromNotificationCenter(_ notification: Notification) {
+       print(notification.object)
     }
 }
 

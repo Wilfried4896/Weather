@@ -9,7 +9,7 @@ protocol LocationCoordinateDelegate: AnyObject {
 
 class OnboardingController: UIViewController {
     weak var coordinator: OnboardingCoordinator?
-   // weak var delegate: LocationCoordinateDelegate?
+    private let notificationCenter = NotificationCenter.default
     let type = CLLocationManager()
     
     lazy var imageView: UIImageView = {
@@ -118,8 +118,10 @@ class OnboardingController: UIViewController {
             DispatchQueue.main.async {
                 switch strongeSelf.type.authorizationStatus {
                 case .restricted, .denied, .notDetermined:
+                    strongeSelf.notificationCenter.post(name: NSNotification.Name("location"), object: nil)
                     strongeSelf.coordinator?.parent?.didTapToKnowCoordinate(locationCoordinate: nil)
                 case .authorizedAlways, .authorizedWhenInUse:
+                    strongeSelf.notificationCenter.post(name: NSNotification.Name("location"), object: location)
                     strongeSelf.coordinator?.parent?.didTapToKnowCoordinate(locationCoordinate: location)
                 @unknown default:
                     fatalError()
@@ -132,6 +134,7 @@ class OnboardingController: UIViewController {
    
     @objc func didTapDontUserLocalization() {
         //delegate?.didTapToKnowCoordinate(locationCoordinate: nil)
+        notificationCenter.post(name: NSNotification.Name("location"), object: nil)
         coordinator?.parent?.didTapToKnowCoordinate(locationCoordinate: nil)
     }
 }
