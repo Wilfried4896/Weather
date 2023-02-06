@@ -1,9 +1,3 @@
-//
-//  LocationManager.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 18.12.2022.
-//
 
 import Foundation
 import CoreLocation

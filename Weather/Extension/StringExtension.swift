@@ -49,6 +49,15 @@ extension String {
         return date
     }
     
+    var toDay: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let format = dateFormatter.date(from: self)
+        dateFormatter.dateFormat = "EE"
+        let date = dateFormatter.string(from: format!)
+        return date
+    }
+    
     var toFullDateHome: String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"

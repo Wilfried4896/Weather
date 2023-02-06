@@ -9,6 +9,8 @@ class HomePageController: UIViewController {
     private var contentView: [UIView] = []
     var locationCordinates: CLLocation?
     let notification = NotificationCenter.default
+//    var latitude: Double
+//    var longitude: Double
 
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -18,13 +20,13 @@ class HomePageController: UIViewController {
         return scrollView
     }()
     
-    lazy var searchPageView: SearchPageView = {
-        let searhPage = SearchPageView()
-        return searhPage
+    lazy var searchPageViewView: SearchPageView = {
+        let search = SearchPageView()
+        return search
     }()
     
-    lazy var emptyPageView: UIView = {
-        let emptyPage = UIView()
+    lazy var emptyPageView: EmptyPageView = {
+        let emptyPage = EmptyPageView()
         return emptyPage
     }()
     
@@ -82,6 +84,16 @@ class HomePageController: UIViewController {
         return parameter
     }()
     
+//    init(latitude: Double, longitude: Double) {
+//        self.latitude = latitude
+//        self.longitude = longitude
+//        super.init(nibName: nil, bundle: nil)
+//    }
+    
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -90,9 +102,10 @@ class HomePageController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         if let getWeatherDay = getWeatherDays() {
             dataWeatherDay = getWeatherDay.data
+            searchPageViewView.weatherDay = [getWeatherDay]
         }
         if let getWeatherHours = getWeatherHour() {
             dataWeatherHour = getWeatherHours.data
@@ -108,9 +121,9 @@ class HomePageController: UIViewController {
         view.addSubview(scrollView)
         
         if locationCordinates != nil {
-            contentView = [tableView, searchPageView]
+            contentView = [tableView, searchPageViewView]
         } else {
-            contentView = [emptyPageView, searchPageView]
+            contentView = [emptyPageView, searchPageViewView]
         }
         
         

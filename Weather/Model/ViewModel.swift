@@ -1,9 +1,3 @@
-//
-//  ViewModel.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 07.01.2023.
-//
 
 import Foundation
 

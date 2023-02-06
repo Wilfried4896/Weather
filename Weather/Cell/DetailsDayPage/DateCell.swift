@@ -1,9 +1,3 @@
-//
-//  DateCell.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 06.12.2022.
-//
 
 import UIKit
 import SnapKit

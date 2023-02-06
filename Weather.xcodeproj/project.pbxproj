@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EC6C06F4299101AF005D3B33 /* SearchPageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6C06F3299101AF005D3B33 /* SearchPageViewCell.swift */; };
+		EC6C06F62991180F005D3B33 /* SearchViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6C06F52991180F005D3B33 /* SearchViewCell.swift */; };
 		EC6D4FE0293F42EF009B933E /* DateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6D4FDF293F42EF009B933E /* DateCell.swift */; };
 		EC6D4FE2293F4571009B933E /* DateShowTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6D4FE1293F4571009B933E /* DateShowTableCell.swift */; };
 		EC6D4FE4293FC95B009B933E /* HomePageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6D4FE3293FC95B009B933E /* HomePageController.swift */; };
@@ -53,6 +55,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EC6C06F3299101AF005D3B33 /* SearchPageViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPageViewCell.swift; sourceTree = "<group>"; };
+		EC6C06F52991180F005D3B33 /* SearchViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewCell.swift; sourceTree = "<group>"; };
 		EC6D4FDF293F42EF009B933E /* DateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateCell.swift; sourceTree = "<group>"; };
 		EC6D4FE1293F4571009B933E /* DateShowTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateShowTableCell.swift; sourceTree = "<group>"; };
 		EC6D4FE3293FC95B009B933E /* HomePageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageController.swift; sourceTree = "<group>"; };
@@ -111,7 +115,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		EC6E65A2293D0123004B450E /* DetailsDayByDayPage */ = {
+		EC6C06F729912588005D3B33 /* SearchPage */ = {
+			isa = PBXGroup;
+			children = (
+				EC6C06F3299101AF005D3B33 /* SearchPageViewCell.swift */,
+				EC6C06F52991180F005D3B33 /* SearchViewCell.swift */,
+			);
+			path = SearchPage;
+			sourceTree = "<group>";
+		};
+		EC6E65A2293D0123004B450E /* DetailsDayPage */ = {
 			isa = PBXGroup;
 			children = (
 				EC6D4FDF293F42EF009B933E /* DateCell.swift */,
@@ -120,7 +133,7 @@
 				EC70E1662940F37200832A95 /* SunMoonTableCell.swift */,
 				EC70E168294125AB00832A95 /* AirQualityTableCell.swift */,
 			);
-			path = DetailsDayByDayPage;
+			path = DetailsDayPage;
 			sourceTree = "<group>";
 		};
 		EC71215D298C482C00C446E5 /* CoreDataFile */ = {
@@ -215,8 +228,9 @@
 		EC74F9482937E3CF0010CDFF /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				EC6E65A2293D0123004B450E /* DetailsDayByDayPage */,
-				EC7916D8293CAC4F0050CAD9 /* DetailsHourByHourPage */,
+				EC6C06F729912588005D3B33 /* SearchPage */,
+				EC6E65A2293D0123004B450E /* DetailsDayPage */,
+				EC7916D8293CAC4F0050CAD9 /* DetailsHourPage */,
 				EC7916D7293CAC380050CAD9 /* HomePage */,
 			);
 			path = Cell;
@@ -255,13 +269,13 @@
 			path = HomePage;
 			sourceTree = "<group>";
 		};
-		EC7916D8293CAC4F0050CAD9 /* DetailsHourByHourPage */ = {
+		EC7916D8293CAC4F0050CAD9 /* DetailsHourPage */ = {
 			isa = PBXGroup;
 			children = (
 				EC7916D9293CAE970050CAD9 /* DetailsSwiftUI.swift */,
 				EC7916DD293CAF6B0050CAD9 /* DetailByHourMoreInfoTableCell.swift */,
 			);
-			path = DetailsHourByHourPage;
+			path = DetailsHourPage;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -361,6 +375,7 @@
 				EC707E1A293DF36600E4B9E0 /* DetailsDayTableCell.swift in Sources */,
 				EC74F93E2937B1880010CDFF /* OnboardingController.swift in Sources */,
 				EC7C54F6293AA18E00E57387 /* WeatherHourTableCell.swift in Sources */,
+				EC6C06F62991180F005D3B33 /* SearchViewCell.swift in Sources */,
 				EC74F9392937B11E0010CDFF /* AppCoordinator.swift in Sources */,
 				EC71210D298BEF1A00C446E5 /* UIBarButtonItem.swift in Sources */,
 				EC7916DE293CAF6B0050CAD9 /* DetailByHourMoreInfoTableCell.swift in Sources */,
@@ -381,6 +396,7 @@
 				EC6D4FE4293FC95B009B933E /* HomePageController.swift in Sources */,
 				EC7916E0293CBB210050CAD9 /* StackViewEtension.swift in Sources */,
 				EC7916DA293CAE970050CAD9 /* DetailsSwiftUI.swift in Sources */,
+				EC6C06F4299101AF005D3B33 /* SearchPageViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

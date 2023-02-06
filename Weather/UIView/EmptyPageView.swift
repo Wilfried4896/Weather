@@ -1,17 +1,22 @@
-//
-//  EmptyPageView.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 07.01.2023.
-//
 
 import UIKit
+import SnapKit
 
 class EmptyPageView: UIView {
     
+    lazy var textLabel: UILabel = {
+       let text = UILabel()
+        text.text = "+"
+        return text
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        print(#function)
+        addSubview(textLabel)
+        
+        textLabel.snp.makeConstraints { make in
+            make.centerX.centerY.equalToSuperview()
+        }
     }
     
     required init?(coder: NSCoder) {

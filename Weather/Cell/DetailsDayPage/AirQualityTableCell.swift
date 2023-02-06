@@ -1,9 +1,3 @@
-//
-//  AirQualityTableCell.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 07.12.2022.
-//
 
 import UIKit
 import SnapKit

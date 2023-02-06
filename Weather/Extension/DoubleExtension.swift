@@ -48,9 +48,9 @@ extension Double {
         
         switch userDefaults.bool(forKey: "isEnableWeather") {
         case true:
-            fahrenheit = String(Int(conversToFahrenheit.rounded())) + "°F"
+            fahrenheit = String(Int(conversToFahrenheit.rounded())) + "°"
         case false:
-            fahrenheit = String(Int(celcus.rounded())) + "°C"
+            fahrenheit = String(Int(celcus.rounded())) + "°"
         }
         return fahrenheit
     }

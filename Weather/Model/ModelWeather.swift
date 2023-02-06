@@ -1,9 +1,3 @@
-//
-//  ModelWeather.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 30.11.2022.
-//
 
 import Foundation
 
