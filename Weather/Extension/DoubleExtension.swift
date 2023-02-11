@@ -10,7 +10,7 @@ extension Double {
         var time = ""
         switch userDefaults.bool(forKey: "isEnableTimeFormat") {
         case true:
-            dateFormatter.dateFormat = "h:mm a"
+            dateFormatter.dateFormat = "h:mma"
             time = dateFormatter.string(from: date)
         case false:
             dateFormatter.dateFormat = "HH:mm"

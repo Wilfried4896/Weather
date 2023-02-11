@@ -1,9 +1,9 @@
 
-
+import UIKit
 import CoreData
 
 class CoreDataManager {
-    
+    static let shared = CoreDataManager()
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "CoreDataWeather")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
@@ -13,9 +13,8 @@ class CoreDataManager {
         })
         return container
     }()
-
+    
     // MARK: - Core Data Saving support
-
     func saveContext () {
         let context = persistentContainer.viewContext
         if context.hasChanges {
@@ -28,28 +27,115 @@ class CoreDataManager {
         }
     }
     
-//    func realodParameterData() -> [ParameterData] {
-//        let request = ParameterData.fetchRequest()
-//        var parameters: [ParameterData] = []
-//        
-//        do {
-//            parameters = try persistentContainer.viewContext.fetch(request)
-//            return parameters
-//        } catch {
-//            print(error.localizedDescription)
-//            return []
-//        }
-//    }
+    private let fetchResquestHour = NSFetchRequest<Hourly>(entityName: "Hourly")
+    private let fetchResquestDay = NSFetchRequest<Dayly>(entityName: "Dayly")
+    private let fetchResquestWeatherCity = NSFetchRequest<WeatherCityHourly>(entityName: "WeatherCityHourly")
+
+    var weatherCity: [WeatherCityHourly] {
+        let fectchResquest: NSFetchRequest<WeatherCityHourly> = WeatherCityHourly.fetchRequest()
+        do {
+            return try persistentContainer.viewContext.fetch(fectchResquest)
+        } catch {
+            print(error.localizedDescription)
+            return []
+        }
+    }
     
-//    func modificationParameter(
-//        _ windSpeed: Bool, _ weather: Bool,
-//        _ timeFormat: Bool, _ notifications: Bool) {
-//        let parameterData = ParameterData(context: persistentContainer.viewContext)
-//            parameterData.windParameter = windSpeed
-//            parameterData.weatherParameter = weather
-//            parameterData.timeFormateParameter = timeFormat
-//            parameterData.notificationParamter = notifications
-//
-//        saveContext()
-//    }
+    func saveDataCityWeatherHourly(weatherCity: WeatherHours) {
+        self.persistentContainer.performBackgroundTask {[weak self] context in
+            self?.deleteObjHourlyFromCoreData(context: context)
+            self?.saveDataHoursToCoreData(weatherHourly: weatherCity, context: context)
+        }
+    }
+    
+    func saveDataCityWeatherDayly(weatherCityDaily: WeatherDays) {
+        self.persistentContainer.performBackgroundTask {[weak self] context in
+            self?.deleteObjDaylyFromCoreData(context: context)
+            self?.saveDataDayToCoreData(weatherDayly: weatherCityDaily, context: context)
+        }
+    }
+    
+    private func saveDataHoursToCoreData(weatherHourly: WeatherHours, context: NSManagedObjectContext) {
+        context.perform {
+            let cityEntity = WeatherCityHourly(context: context)
+            cityEntity.cityName = weatherHourly.city_name
+            weatherHourly.data.forEach { dataHour in
+                let hoursEntity = Hourly(context: context)
+                hoursEntity.descriptionIcon = dataHour.weather.descriptionIcon
+                hoursEntity.icon = dataHour.weather.icon
+                hoursEntity.pop = dataHour.pop
+                hoursEntity.timestamp_local = dataHour.timestamp_local
+                hoursEntity.app_temp = dataHour.app_temp
+                hoursEntity.precip = dataHour.precip
+                hoursEntity.clouds = Int64(dataHour.clouds)
+                hoursEntity.datetime = dataHour.datetime
+                hoursEntity.rh = dataHour.rh
+                hoursEntity.weatherCity = cityEntity
+            }
+            // saving Data
+            do {
+                try context.save()
+            } catch {
+                fatalError("Saving saveDataHoursToCoreData \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func saveDataDayToCoreData(weatherDayly: WeatherDays, context: NSManagedObjectContext) {
+        context.perform {
+            let weatherDaily = WeatherCityDaily(context: context)
+            weatherDayly.data.forEach { dataDay in
+                let dayEntity = Dayly(context: context)
+                dayEntity.icon = dataDay.weather.icon
+                dayEntity.descriptionIcon = dataDay.weather.descriptionIcon
+                dayEntity.rh = dataDay.rh
+                dayEntity.datetime = dataDay.datetime
+                dayEntity.clouds = Int64(dataDay.clouds)
+                dayEntity.pop = dataDay.pop
+                dayEntity.app_max_temp = dataDay.app_max_temp
+                dayEntity.app_min_temp = dataDay.app_min_temp
+                dayEntity.high_temp = dataDay.high_temp
+                dayEntity.low_temp = dataDay.low_temp
+                dayEntity.max_temp = dataDay.max_temp
+                dayEntity.min_temp = dataDay.min_temp
+                dayEntity.moon_phase_lunation = dataDay.moon_phase_lunation
+                dayEntity.precip = dataDay.precip
+                dayEntity.max_dhi = dataDay.max_dhi ?? 0.0
+                dayEntity.moonset_ts = Int64(dataDay.moonset_ts)
+                dayEntity.moonrise_ts = Int64(dataDay.moonrise_ts)
+                dayEntity.sunrise_ts = Int64(dataDay.sunrise_ts)
+                dayEntity.sunset_ts = Int64(dataDay.sunset_ts)
+                dayEntity.temp = dataDay.temp
+                dayEntity.wind_cdir = dataDay.wind_cdir
+                dayEntity.wind_spd = dataDay.wind_spd
+                dayEntity.weatherDaily = weatherDaily
+            }
+            // save Data
+            do {
+                try context.save()
+            } catch {
+                fatalError("Saving saveDataDayToCoreData \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func deleteObjHourlyFromCoreData(context: NSManagedObjectContext) {
+        do {
+            let object = try context.fetch(fetchResquestHour)
+            _ = object.map({context.delete($0)})
+            try context.save()
+        } catch {
+            fatalError("Error deleting Data \(error)")
+        }
+    }
+    
+    private func deleteObjDaylyFromCoreData(context: NSManagedObjectContext) {
+        do {
+            let object = try context.fetch(fetchResquestDay)
+            _ = object.map({context.delete($0)})
+            try context.save()
+        } catch {
+            fatalError("Error deleting Data \(error)")
+        }
+    }
 }

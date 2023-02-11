@@ -13,7 +13,7 @@ extension String {
         let format = dateFormatter.date(from: self)
         switch userDefaultString.bool(forKey: "isEnableTimeFormat") {
         case true:
-            dateFormatter.dateFormat = "h:mm a"
+            dateFormatter.dateFormat = "h:mma"
             time = dateFormatter.string(from: format!)
         case false:
             dateFormatter.dateFormat = "HH:mm"

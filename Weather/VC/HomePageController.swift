@@ -1,14 +1,17 @@
 
 import UIKit
 import SnapKit
-import CoreLocation
+import CoreData
 
 class HomePageController: UIViewController {
     
     weak var coordinator: HomePageCoordinator?
     private var contentView: [UIView] = []
-    var locationCordinates: CLLocation?
+    var locationCordinates: [Double]?
     let notification = NotificationCenter.default
+    var weatherHours: WeatherHours?
+    var weatherDay: WeatherDays?
+    var weatherSearch: [WeatherDays]?
 //    var latitude: Double
 //    var longitude: Double
 
@@ -19,7 +22,7 @@ class HomePageController: UIViewController {
         scrollView.showsHorizontalScrollIndicator = false
         return scrollView
     }()
-    
+
     lazy var searchPageViewView: SearchPageView = {
         let search = SearchPageView()
         return search
@@ -63,17 +66,7 @@ class HomePageController: UIViewController {
         pageControler.currentPage = 0
         return pageControler
     }()
-    
-    lazy var locationIcon: UIButton = {
-        let location = UIButton()
-        location.setImage(UIImage(named: "месторасположение"), for: .normal)
-        location.snp.makeConstraints { make in
-            make.height.equalTo(30)
-            make.width.equalTo(20)
-        }
-        return location
-    }()
-    
+
     lazy var parameterIcon: UIButton = {
         let parameter = UIButton()
         parameter.setImage(UIImage(named: "бургер"), for: .normal)
@@ -89,49 +82,60 @@ class HomePageController: UIViewController {
 //        self.longitude = longitude
 //        super.init(nibName: nil, bundle: nil)
 //    }
-    
+//
 //    required init?(coder: NSCoder) {
 //        fatalError("init(coder:) has not been implemented")
 //    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        print(CoreDataManager.shared.weatherCity)
         configurationHomePage()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if let getWeatherDay = getWeatherDays() {
-            dataWeatherDay = getWeatherDay.data
-            searchPageViewView.weatherDay = [getWeatherDay]
+        if let weatherDay, let weatherSearch {
+            dataWeatherDay = weatherDay.data
+            navigationItem.title = weatherDay.city_name
+            searchPageViewView.weatherDay = weatherSearch
         }
-        if let getWeatherHours = getWeatherHour() {
-            dataWeatherHour = getWeatherHours.data
+
+        if let weatherHours {
+            dataWeatherHour = weatherHours.data
         }
-        
-        notification.addObserver(self, selector: #selector(receivedDataFromNotificationCenter(_:)), name: NSNotification.Name("location"), object: nil)
     }
     
     private func configurationHomePage() {
         
         view.backgroundColor = .systemBackground
-        
         view.addSubview(scrollView)
         
-        if locationCordinates != nil {
+        if let locationCordinates = locationCordinates {
+            WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/hourly?lat=\(locationCordinates[0])&lon=\(locationCordinates[1])&hours&hours=24", decodable: WeatherHours.self) { result in
+                self.weatherHours = result
+                //print(result.data)
+            }
+            WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/daily?lat=\(locationCordinates[0])&lon=\(locationCordinates[1])&hours", decodable: WeatherDays.self) { result in
+                self.weatherDay = result
+                self.weatherSearch?.append(result)
+                //print(result.data)
+            }
             contentView = [tableView, searchPageViewView]
         } else {
             contentView = [emptyPageView, searchPageViewView]
         }
         
-        
         contentView.forEach { view in
             scrollView.addSubview(view)
         }
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: locationIcon)
+       // navigationItem.rightBarButtonItem = UIBarButtonItem(customView: locationIcon)
+        let addCity = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewCity))
+        addCity.tintColor = .black
+        navigationItem.rightBarButtonItem = addCity
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: parameterIcon)
         
         pageControler.numberOfPages = contentView.count
@@ -178,36 +182,35 @@ class HomePageController: UIViewController {
         }
     }
     
-    private func getWeatherHour() -> WeatherHours? {
-        if let url = Bundle.main.path(forResource: "weatherHour", ofType: "json") {
-                do {
-                    let data = try Data(contentsOf: URL(filePath: url))
-                    let decoder = JSONDecoder()
-                    let jsonData = try decoder.decode(WeatherHours.self, from: data)
-                    return jsonData
-                } catch {
-                    print("error:\(error)")
+    @objc private func addNewCity() {
+        let alert = UIAlertController(title: "Add new city", message: "Do you want to add city", preferredStyle: .alert)
+        alert.addTextField { textField in
+            textField.placeholder = "New city"
+        }
+        let addAction = UIAlertAction(title: "Search", style: .default) { _ in
+            guard let text = alert.textFields?[0].text else { return }
+            let textField = text
+            LocationManager.shared.getCoordinate(addressString: textField) { location in
+                let latitude = location.coordinate.latitude
+                let longitude = location.coordinate.longitude
+                print(location.coordinate)
+                WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/hourly?lat=\(latitude)&lon=\(longitude)&hours&hours=24", decodable: WeatherHours.self) { result in
+                    self.weatherHours = result
+                    //print(result.data)
+                }
+                WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/daily?lat=\(latitude)&lon=\(longitude)&hours", decodable: WeatherDays.self) { result in
+                    self.weatherDay = result
+                   // print(self.weatherDay?.city_name)
+                    self.weatherSearch?.append(result)
+                    //print(result.data)
                 }
             }
-            return nil
-    }
-    
-    private func getWeatherDays() -> WeatherDays? {
-        if let url = Bundle.main.path(forResource: "weatherDay", ofType: "json") {
-                do {
-                    let data = try Data(contentsOf: URL(filePath: url))
-                    let decoder = JSONDecoder()
-                    let jsonData = try decoder.decode(WeatherDays.self, from: data)
-                    return jsonData
-                } catch {
-                    print("error:\(error)")
-                }
-            }
-            return nil
-    }
-    
-   @objc private func receivedDataFromNotificationCenter(_ notification: Notification) {
-       print(notification.object)
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive)
+        alert.addAction(addAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
     }
 }
 

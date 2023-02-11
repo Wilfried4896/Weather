@@ -20,7 +20,6 @@ class SearchPageView: UIView {
     
     lazy var collectionView: UICollectionView = {
         let viewLayout = UICollectionViewFlowLayout()
-//        viewLayout.minimumInteritemSpacing = 5
         viewLayout.scrollDirection = .vertical
         let collection = UICollectionView(frame: .zero, collectionViewLayout: viewLayout)
         collection.register(SearchViewCell.self, forCellWithReuseIdentifier: SearchViewCell.shared)
@@ -50,20 +49,7 @@ class SearchPageView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-//    private func getWeatherDays() -> WeatherDays? {
-//        if let url = Bundle.main.path(forResource: "weatherDay", ofType: "json") {
-//                do {
-//                    let data = try Data(contentsOf: URL(filePath: url))
-//                    let decoder = JSONDecoder()
-//                    let jsonData = try decoder.decode(WeatherDays.self, from: data)
-//                    return jsonData
-//                } catch {
-//                    print("error:\(error)")
-//                }
-//            }
-//            return nil
-//    }
+
 }
 extension SearchPageView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -94,8 +80,9 @@ extension SearchPageView: UISearchBarDelegate {
         LocationManager.shared.getCoordinate(addressString: searchText) { location in
             let latitude = location.coordinate.latitude
             let longitude = location.coordinate.longitude
+            print(location.coordinate)
             WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/hourly?lat=\(latitude)&lon=\(longitude)&hours&hours=24", decodable: WeatherHours.self) { result in
-                print(result.data)
+                print(result.city_name)
             }
         }
     }

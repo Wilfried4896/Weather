@@ -24,7 +24,7 @@ class DateCell: UICollectionViewCell {
         contentView.addSubview(dateLabel)
         dateLabel.snp.makeConstraints { make in
             make.centerX.equalTo(contentView.snp.centerX)
-            make.top.bottom.equalTo(contentView).inset(7)
+            make.top.bottom.equalTo(contentView)
         }
     }
     

@@ -97,7 +97,7 @@ class SearchViewCell: UICollectionViewCell {
             cityLabel.text = weatherDays.city_name
             imageWeather.image = UIImage(named: weatherDays.data[0].weather.icon)
             labelWeather.text = weatherDays.data[0].temp.concervCelcusFahrenheit
-            descriptionLabel.text = weatherDays.data[0].weather.description
+            descriptionLabel.text = weatherDays.data[0].weather.descriptionIcon
         }
     }
 }

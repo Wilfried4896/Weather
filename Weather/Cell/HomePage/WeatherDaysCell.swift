@@ -99,7 +99,7 @@ class WeatherDaysCell: UICollectionViewCell {
         dayLabel.text = day.datetime.toDate
         imageIcon.image = UIImage(named: day.weather.icon)
         humidityLabel.text = "\(Int(day.rh))%"
-        descriptionLabel.text = day.weather.description
+        descriptionLabel.text = day.weather.descriptionIcon
         weatherMaxMinLabel.text = day.low_temp.concervCelcusFahrenheit + " " +  day.high_temp.concervCelcusFahrenheit
     }
 }

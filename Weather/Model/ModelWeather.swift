@@ -18,7 +18,6 @@ struct WeatherDays: Codable {
     var data: [DataDays]
 }
 
-
 struct DataHours: Codable, Identifiable {
     var id = UUID()
     var wind_spd: Double // vitesse du vent
@@ -73,5 +72,10 @@ struct DataDays: Codable {
 
 struct WeatherDescription: Codable {
     var icon: String // icon pour les differents temps (dossiers avec les images en png)
-    var description: String // description du temps
+    var descriptionIcon: String // description du temps
+    
+    enum CodingKeys: String, CodingKey {
+        case icon
+        case descriptionIcon = "description"
+    }
 }

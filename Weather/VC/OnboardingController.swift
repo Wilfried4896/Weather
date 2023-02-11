@@ -4,13 +4,15 @@ import SnapKit
 import CoreLocation
 
 protocol LocationCoordinateDelegate: AnyObject {
-    func didTapToKnowCoordinate (locationCoordinate: CLLocation?)
+    func didTapToKnowCoordinate (locationCoordinate: [Double]?)
 }
 
 class OnboardingController: UIViewController {
     weak var coordinator: OnboardingCoordinator?
     private let notificationCenter = NotificationCenter.default
     let type = CLLocationManager()
+    weak var delegate: LocationCoordinateDelegate?
+    let coreDataManager = CoreDataManager()
     
     lazy var imageView: UIImageView = {
         let image = UIImageView()
@@ -44,7 +46,7 @@ class OnboardingController: UIViewController {
         usedLocalization.setTitle("ИСПОЛЬЗОВАТЬ МЕСТОПОЛОЖЕНИЕ УСТРОЙСТВА", for: .normal)
         usedLocalization.backgroundColor = UIColor(red: 242/255, green: 110/255, blue: 18/255, alpha: 1)
         usedLocalization.setTitleColor(.white, for: .normal)
-        usedLocalization.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        usedLocalization.titleLabel?.font = UIFont.systemFont(ofSize: 12, weight: .bold)
         usedLocalization.layer.cornerRadius = 10
         usedLocalization.addTarget(self, action: #selector(didTapLocalization), for: .touchUpInside)
         return usedLocalization
@@ -118,24 +120,27 @@ class OnboardingController: UIViewController {
             DispatchQueue.main.async {
                 switch strongeSelf.type.authorizationStatus {
                 case .restricted, .denied, .notDetermined:
-                    strongeSelf.notificationCenter.post(name: NSNotification.Name("location"), object: nil)
-                    strongeSelf.coordinator?.parent?.didTapToKnowCoordinate(locationCoordinate: nil)
+                    strongeSelf.delegate?.didTapToKnowCoordinate(locationCoordinate: nil)
                 case .authorizedAlways, .authorizedWhenInUse:
-                    strongeSelf.notificationCenter.post(name: NSNotification.Name("location"), object: location)
-                    strongeSelf.coordinator?.parent?.didTapToKnowCoordinate(locationCoordinate: location)
+                    WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/hourly?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&hours&hours=24", decodable: WeatherHours.self) { result in
+                        self?.coreDataManager.saveDataCityWeatherHourly(weatherCity: result)
+                    }
+                    strongeSelf.delegate?.didTapToKnowCoordinate(locationCoordinate: [location.coordinate.latitude, location.coordinate.longitude])
+                   // UserDefaults.setValue(location, forKey: "location")
                 @unknown default:
                     fatalError()
                 }
             }
-//            strongeSelf.coordinator?.parent?.didTapToKnowCoordinate(locationCoordinate: location)
+            strongeSelf.coordinator?.parent?.homeCoordinator()
         }
     }
     
    
     @objc func didTapDontUserLocalization() {
         //delegate?.didTapToKnowCoordinate(locationCoordinate: nil)
-        notificationCenter.post(name: NSNotification.Name("location"), object: nil)
-        coordinator?.parent?.didTapToKnowCoordinate(locationCoordinate: nil)
+        //notificationCenter.post(name: NSNotification.Name("location"), object: nil)
+        delegate?.didTapToKnowCoordinate(locationCoordinate: nil)
+        coordinator?.parent?.homeCoordinator()
     }
 }
 

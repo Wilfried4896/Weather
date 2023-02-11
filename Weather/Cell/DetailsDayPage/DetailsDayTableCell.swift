@@ -231,7 +231,7 @@ class DetailsDayTableCell: UITableViewCell {
         feelingValueLabel.text = dataDayLow.max_temp.concervCelcusFahrenheit
         tempIcon.image = UIImage(named: dataDayLow.weather.icon)
         tempLabel.text = dataDayLow.high_temp.concervCelcusFahrenheit
-        descriptionLabel.text = dataDayLow.weather.description
+        descriptionLabel.text = dataDayLow.weather.descriptionIcon
         windValueLabel.text = "\(dataDayLow.wind_spd.conversMileKilometr) \(dataDayLow.wind_cdir)"
         
         if let dhi = dataDayLow.max_dhi {
@@ -248,7 +248,7 @@ class DetailsDayTableCell: UITableViewCell {
         feelingValueLabel.text = dataDayNigth.app_min_temp.concervCelcusFahrenheit
         tempIcon.image = UIImage(named: dataDayNigth.weather.icon)
         tempLabel.text = dataDayNigth.low_temp.concervCelcusFahrenheit
-        descriptionLabel.text = dataDayNigth.weather.description
+        descriptionLabel.text = dataDayNigth.weather.descriptionIcon
         windValueLabel.text = dataDayNigth.wind_spd.conversMileKilometr +  "\(dataDayNigth.wind_cdir)"
         
         if let dhi = dataDayNigth.max_dhi {

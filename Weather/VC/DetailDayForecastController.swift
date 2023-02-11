@@ -30,26 +30,38 @@ class DetailDayForecastController: UIViewController {
         return tableview
     }()
     
+    lazy var cityLabel: UILabel = {
+        let city = UILabel()
+        city.configurationPrincipeWeather(size: 18, weight: .semibold, color: .black)
+        return city
+    }()
+    
     var dataDayH: [DataDays] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configurationDetailDayForecast()
-
     }
     
     private func configurationDetailDayForecast() {
         view.backgroundColor = .systemBackground
         view.addSubview(tableView)
+        view.addSubview(cityLabel)
         
         navigationItem.leftBarButtonItem = UIBarButtonItem.menuButton(self, action: #selector(actionButton), imageName: "Arrow 2", titleName: "\tДневная погода", color: .black)
         
         if let getForBundle = getForBundle() {
             dataDayH = getForBundle.data
+            cityLabel.text = getForBundle.city_name
+        }
+        
+        cityLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(15)
+            make.leading.equalTo(view).inset(20)
         }
         
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(cityLabel.snp.bottom)
             make.trailing.leading.equalTo(view).inset(15)
             make.bottom.equalTo(view)
         }

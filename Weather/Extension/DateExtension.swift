@@ -9,7 +9,7 @@ extension Date {
         var time = ""
         switch userDefaultDate.bool(forKey: "isEnableTimeFormat") {
         case true:
-            dateFormate.dateFormat = "h:mm a"
+            dateFormate.dateFormat = "h:mma"
             time = dateFormate.string(from: self)
         case false:
             dateFormate.dateFormat = "HH:mm"

@@ -11,9 +11,9 @@ class HomePageCoordinator: Coordinator, HomePageDelegate {
     weak var parent: AppCoordinator?
     var childrenCoordinators: [Coordinator] = []
     var navigation: UINavigationController
-    var coreLocation: CLLocation?
+    var coreLocation: [Double]?
     
-    init(navigation: UINavigationController, coreLocation: CLLocation?) {
+    init(navigation: UINavigationController, coreLocation: [Double]?) {
         self.navigation = navigation
         self.coreLocation = coreLocation
     }
@@ -24,8 +24,9 @@ class HomePageCoordinator: Coordinator, HomePageDelegate {
     
     func homePageVC() {
         let vc = HomePageController()
+        //print(coreLocation)
         vc.coordinator = self
-        vc.locationCordinates = coreLocation
+        //vc.locationCordinates = coreLocation
         navigation.pushViewController(vc, animated: true)
     }
     

@@ -14,6 +14,12 @@ class DetailHoursForecastController: UIViewController {
         }
     }
     
+    lazy var cityLabel: UILabel = {
+        let city = UILabel()
+        city.configurationPrincipeWeather(size: 18, weight: .semibold, color: .black)
+        return city
+    }()
+    
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(DetailByHourMoreInfoTableCell.self, forCellReuseIdentifier: DetailByHourMoreInfoTableCell.shared)
@@ -36,6 +42,7 @@ class DetailHoursForecastController: UIViewController {
         
         if let getForBundle = getForBundle() {
             dataHour = getForBundle.data
+            cityLabel.text = getForBundle.city_name
         }
     }
 
@@ -50,9 +57,15 @@ class DetailHoursForecastController: UIViewController {
         
         view.addSubview(charts)
         view.addSubview(tableView)
+        view.addSubview(cityLabel)
+        
+        cityLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.equalTo(view).inset(60)
+        }
         
         charts.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(cityLabel.snp.bottom).offset(15)
             make.leading.trailing.equalTo(view)
             make.height.equalTo(140)
         }

@@ -194,7 +194,7 @@ class HomeTableCell: UITableViewCell {
         windLabel.text = homePageData.wind_spd.conversMileKilometr
         precipitationLabel.text = "\(Int(homePageData.pop.rounded()))%"
         dateTimeLabel.text = "\(Date().dateShort),  \(homePageData.datetime.toFullDateHome)"
-        descriptionLabel.text = homePageData.weather.description
+        descriptionLabel.text = homePageData.weather.descriptionIcon
         
         guard let dhi = homePageData.max_dhi else {
             numberNolabel.text = "\(0)"

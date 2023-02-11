@@ -12,11 +12,11 @@ class EmptyPageView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(textLabel)
+        //addSubview(textLabel)
         
-        textLabel.snp.makeConstraints { make in
-            make.centerX.centerY.equalToSuperview()
-        }
+//        textLabel.snp.makeConstraints { make in
+//            make.centerX.centerY.equalToSuperview()
+//        }
     }
     
     required init?(coder: NSCoder) {

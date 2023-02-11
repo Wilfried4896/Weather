@@ -15,7 +15,7 @@ class WeatherManager {
             return }
     
         let headers = [
-            "X-RapidAPI-Key": "f7b1c3f286msh769eba7c71bdabdp100fbbjsn94b56fd20a55",
+            "X-RapidAPI-Key": "3627e2b665mshbc179a4b1e75cacp115659jsn98bdc20526d8",
             "X-RapidAPI-Host": "weatherbit-v1-mashape.p.rapidapi.com"
         ]
         
@@ -39,5 +39,4 @@ class WeatherManager {
                 }
             }
         }
-
 }
