@@ -40,13 +40,13 @@
         <relationship name="weatherCity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WeatherCityHourly" inverseName="weatherHourly" inverseEntity="WeatherCityHourly"/>
     </entity>
     <entity name="WeatherCityDaily" representedClassName="WeatherCityDaily" syncable="YES" codeGenerationType="class">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="daily" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Dayly" inverseName="weatherDaily" inverseEntity="Dayly"/>
     </entity>
     <entity name="WeatherCityHourly" representedClassName="WeatherCityHourly" syncable="YES" codeGenerationType="class">
         <attribute name="cityName" optional="YES" attributeType="String"/>
-        <attribute name="latitude" optional="YES" attributeType="Double" valueTransformerName="[Double]" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="weatherHourly" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Hourly" inverseName="weatherCity" inverseEntity="Hourly"/>
     </entity>
 </model>

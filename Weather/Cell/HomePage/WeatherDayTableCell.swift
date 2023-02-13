@@ -15,7 +15,7 @@ class WeatherDayTableCell: UITableViewCell {
         }
     }
     
-    var dataWeatherDay = [DataDays]() {
+    var dataWeatherDay = [Dayly]() {
         didSet {
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
@@ -98,7 +98,7 @@ extension WeatherDayTableCell: UICollectionViewDataSource, UICollectionViewDeleg
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WeatherDaysCell.identifier, for: indexPath) as! WeatherDaysCell
         cell.backgroundColor = UIColor(red: 233/255, green: 238/255, blue: 250/255, alpha: 1)
         cell.layer.cornerRadius = 10
-        cell.setUpCell(day: dataWeatherDay[indexPath.item])
+       // cell.setUpCell(day: dataWeatherDay[indexPath.item])
         return cell
     }
     

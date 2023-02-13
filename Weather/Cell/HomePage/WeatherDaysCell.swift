@@ -95,11 +95,11 @@ class WeatherDaysCell: UICollectionViewCell {
         }
     }
     
-    func setUpCell(day: DataDays) {
-        dayLabel.text = day.datetime.toDate
-        imageIcon.image = UIImage(named: day.weather.icon)
+    func setUpCell(day: Dayly) {
+        dayLabel.text = day.datetime?.toDate
+        imageIcon.image = UIImage(named: day.icon ?? "")
         humidityLabel.text = "\(Int(day.rh))%"
-        descriptionLabel.text = day.weather.descriptionIcon
+        descriptionLabel.text = day.descriptionIcon
         weatherMaxMinLabel.text = day.low_temp.concervCelcusFahrenheit + " " +  day.high_temp.concervCelcusFahrenheit
     }
 }

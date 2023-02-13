@@ -3,7 +3,7 @@ import Foundation
 import Alamofire
 
 // f7b1c3f286msh769eba7c71bdabdp100fbbjsn94b56fd20a55
-// 3627e2b665mshbc179a4b1e75cacp115659jsn98bdc20526d8
+// cc5ac6e99fmsh34a47779a346706p15d5c3jsnf28181f9193b
 
 class WeatherManager {
     static let shared = WeatherManager()
@@ -15,7 +15,7 @@ class WeatherManager {
             return }
     
         let headers = [
-            "X-RapidAPI-Key": "3627e2b665mshbc179a4b1e75cacp115659jsn98bdc20526d8",
+            "X-RapidAPI-Key": "f7b1c3f286msh769eba7c71bdabdp100fbbjsn94b56fd20a55",
             "X-RapidAPI-Host": "weatherbit-v1-mashape.p.rapidapi.com"
         ]
         

@@ -7,14 +7,7 @@ class HomePageController: UIViewController {
     
     weak var coordinator: HomePageCoordinator?
     private var contentView: [UIView] = []
-    var locationCordinates: [Double]?
-    let notification = NotificationCenter.default
-    var weatherHours: WeatherHours?
-    var weatherDay: WeatherDays?
-    var weatherSearch: [WeatherDays]?
-//    var latitude: Double
-//    var longitude: Double
-
+    
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.isPagingEnabled = true
@@ -49,15 +42,20 @@ class HomePageController: UIViewController {
         return tableview
     }()
     
-    var dataWeatherDay = [DataDays]() {
-        didSet {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-    }
+    let fetchControllerDaily: NSFetchedResultsController<WeatherCityDaily> = {
+        let fetchResquest = NSFetchRequest<WeatherCityDaily>(entityName: "WeatherCityDaily")
+        fetchResquest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        
+        let frc = NSFetchedResultsController(
+            fetchRequest: fetchResquest,
+            managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil)
+        
+        return frc
+    }()
     
-    var dataWeatherHour = [DataHours]()
+    var dataWeatherHour = [Hourly]()
     
     lazy var pageControler: UIPageControl = {
         let pageControler = UIPageControl()
@@ -77,33 +75,18 @@ class HomePageController: UIViewController {
         return parameter
     }()
     
-//    init(latitude: Double, longitude: Double) {
-//        self.latitude = latitude
-//        self.longitude = longitude
-//        super.init(nibName: nil, bundle: nil)
-//    }
-//
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(CoreDataManager.shared.weatherCity)
+        
         configurationHomePage()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        if let weatherDay, let weatherSearch {
-            dataWeatherDay = weatherDay.data
-            navigationItem.title = weatherDay.city_name
-            searchPageViewView.weatherDay = weatherSearch
-        }
-
-        if let weatherHours {
-            dataWeatherHour = weatherHours.data
+        do {
+            try fetchControllerDaily.performFetch()
+        } catch {
+            print(error.localizedDescription)
         }
     }
     
@@ -112,26 +95,18 @@ class HomePageController: UIViewController {
         view.backgroundColor = .systemBackground
         view.addSubview(scrollView)
         
-        if let locationCordinates = locationCordinates {
-            WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/hourly?lat=\(locationCordinates[0])&lon=\(locationCordinates[1])&hours&hours=24", decodable: WeatherHours.self) { result in
-                self.weatherHours = result
-                //print(result.data)
-            }
-            WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/daily?lat=\(locationCordinates[0])&lon=\(locationCordinates[1])&hours", decodable: WeatherDays.self) { result in
-                self.weatherDay = result
-                self.weatherSearch?.append(result)
-                //print(result.data)
-            }
-            contentView = [tableView, searchPageViewView]
-        } else {
+        let locationCoord = UserDefaults.standard.array(forKey: "locationCoord") as? [Double]
+        
+        if  let locationCoord, locationCoord.isEmpty {
             contentView = [emptyPageView, searchPageViewView]
+        } else {
+            contentView = [tableView, searchPageViewView]
         }
         
         contentView.forEach { view in
             scrollView.addSubview(view)
         }
         
-       // navigationItem.rightBarButtonItem = UIBarButtonItem(customView: locationIcon)
         let addCity = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewCity))
         addCity.tintColor = .black
         navigationItem.rightBarButtonItem = addCity
@@ -193,16 +168,12 @@ class HomePageController: UIViewController {
             LocationManager.shared.getCoordinate(addressString: textField) { location in
                 let latitude = location.coordinate.latitude
                 let longitude = location.coordinate.longitude
-                print(location.coordinate)
                 WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/hourly?lat=\(latitude)&lon=\(longitude)&hours&hours=24", decodable: WeatherHours.self) { result in
-                    self.weatherHours = result
-                    //print(result.data)
+                  //  self.weatherHours = result
                 }
                 WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/daily?lat=\(latitude)&lon=\(longitude)&hours", decodable: WeatherDays.self) { result in
-                    self.weatherDay = result
-                   // print(self.weatherDay?.city_name)
-                    self.weatherSearch?.append(result)
-                    //print(result.data)
+                  //  self.weatherDay = result
+                   // self.weatherSearch?.append(result)
                 }
             }
         }
@@ -214,10 +185,14 @@ class HomePageController: UIViewController {
     }
 }
 
-extension HomePageController: UIScrollViewDelegate {
+extension HomePageController: UIScrollViewDelegate, NSFetchedResultsControllerDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pageNumber = round(scrollView.contentOffset.x / view.frame.size.width)
         pageControler.currentPage = Int(pageNumber)
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        tableView.reloadData()
     }
     
     func indexDelected(indexSelected: IndexPath) {
@@ -242,7 +217,7 @@ extension HomePageController: UITableViewDelegate, UITableViewDataSource, DateSh
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 1
+            return fetchControllerDaily.sections?[0].numberOfObjects ?? 1
         case 1:
             return 1
         case 2:
@@ -256,17 +231,22 @@ extension HomePageController: UITableViewDelegate, UITableViewDataSource, DateSh
         switch indexPath.section {
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCell.shared, for: indexPath) as! HomeTableCell
-            cell.setUp(homePageData: dataWeatherDay[0])
+            let weatherCurrent = fetchControllerDaily.object(at: indexPath)
+            
+            let weatherDaily = (weatherCurrent.daily!.allObjects as! [Dayly]).sorted(by: { $0.datetime! < $1.datetime! })
+            cell.setUp(homePageData: weatherDaily.first!)
             return cell
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: WeatherHourTableCell.identifier, for: indexPath) as! WeatherHourTableCell
-            cell.dataWeatherHour = dataWeatherHour
+            //let fetchHourly = CoreDataManager.shared.weatherCity.first!.weatherHourly as? [Hourly]
+            
+            //cell.dataWeatherHour = fetchHourly!
             cell.delegate = self
             return cell
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: WeatherDayTableCell.identifier, for: indexPath) as! WeatherDayTableCell
             cell.delegateShowDetailDay = self
-            cell.dataWeatherDay = dataWeatherDay
+          //  cell.dataWeatherDay = dataWeatherDay
             return cell
         default:
             return tableView.dequeueReusableCell(withIdentifier: "", for: indexPath) as UITableViewCell

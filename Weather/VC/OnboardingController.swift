@@ -2,17 +2,12 @@
 import UIKit
 import SnapKit
 import CoreLocation
-
-protocol LocationCoordinateDelegate: AnyObject {
-    func didTapToKnowCoordinate (locationCoordinate: [Double]?)
-}
+import CoreData
 
 class OnboardingController: UIViewController {
     weak var coordinator: OnboardingCoordinator?
     private let notificationCenter = NotificationCenter.default
     let type = CLLocationManager()
-    weak var delegate: LocationCoordinateDelegate?
-    let coreDataManager = CoreDataManager()
     
     lazy var imageView: UIImageView = {
         let image = UIImageView()
@@ -63,8 +58,8 @@ class OnboardingController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        UserDefaults.standard.set(true, forKey: "isConnected")
         configurationOnboarding()
-        
     }
     
     private func configurationOnboarding() {
@@ -119,14 +114,18 @@ class OnboardingController: UIViewController {
             guard let strongeSelf = self else { return }
             DispatchQueue.main.async {
                 switch strongeSelf.type.authorizationStatus {
-                case .restricted, .denied, .notDetermined:
-                    strongeSelf.delegate?.didTapToKnowCoordinate(locationCoordinate: nil)
+                case .restricted, .denied, .notDetermined: break
+                   
                 case .authorizedAlways, .authorizedWhenInUse:
-                    WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/hourly?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&hours&hours=24", decodable: WeatherHours.self) { result in
-                        self?.coreDataManager.saveDataCityWeatherHourly(weatherCity: result)
+                    let locationCoord = [location.coordinate.latitude, location.coordinate.longitude]
+                    WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/hourly?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&hours=24", decodable: WeatherHours.self) { result in
+                        CoreDataManager.shared.saveDataCityWeatherHourly(from: result)
                     }
-                    strongeSelf.delegate?.didTapToKnowCoordinate(locationCoordinate: [location.coordinate.latitude, location.coordinate.longitude])
-                   // UserDefaults.setValue(location, forKey: "location")
+                    WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/daily?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)", decodable: WeatherDays.self) { result in
+                        CoreDataManager.shared.saveDataCityWeatherDayly(weatherCityDaily: result)
+                    }
+                    UserDefaults.standard.set(locationCoord, forKey: "locationCoord")
+                    
                 @unknown default:
                     fatalError()
                 }
@@ -137,9 +136,6 @@ class OnboardingController: UIViewController {
     
    
     @objc func didTapDontUserLocalization() {
-        //delegate?.didTapToKnowCoordinate(locationCoordinate: nil)
-        //notificationCenter.post(name: NSNotification.Name("location"), object: nil)
-        delegate?.didTapToKnowCoordinate(locationCoordinate: nil)
         coordinator?.parent?.homeCoordinator()
     }
 }

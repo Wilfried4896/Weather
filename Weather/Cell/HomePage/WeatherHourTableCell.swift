@@ -10,7 +10,7 @@ class WeatherHourTableCell: UITableViewCell {
     static let identifier = "WeatherHourTableCell"
     weak var delegate: WeatherHourDelegate?
     
-    var dataWeatherHour = [DataHours]() {
+    var dataWeatherHour = [Hourly]() {
         didSet {
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
@@ -75,7 +75,7 @@ extension WeatherHourTableCell: UICollectionViewDelegateFlowLayout, UICollection
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WeatherHoursCell.identifier, for: indexPath) as! WeatherHoursCell
         cell.layer.cornerRadius = 22
-        cell.setUp(hour: dataWeatherHour[indexPath.item])
+       // cell.setUp(hour: dataWeatherHour[indexPath.item])
         return cell
     }
     

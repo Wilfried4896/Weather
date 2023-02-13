@@ -59,9 +59,9 @@ class WeatherHoursCell: UICollectionViewCell {
         }
     }
     
-    func setUp(hour: DataHours) {
-        timeLabel.text = hour.timestamp_local.toTime
-        imageIcon.image = UIImage(named: hour.weather.icon)
+    func setUp(hour: Hourly) {
+        timeLabel.text = hour.timestamp_local?.toTime
+        imageIcon.image = UIImage(named: hour.icon ?? "")
         weatherLabel.text = hour.temp.concervCelcusFahrenheit
     }
 }

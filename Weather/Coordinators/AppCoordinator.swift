@@ -1,7 +1,7 @@
 
 import UIKit
 
-class AppCoordinator: Coordinator, LocationCoordinateDelegate {
+class AppCoordinator: Coordinator {
     var window: UIWindow?
     var navigation: UIViewController?
     var childrenCoordinators: [Coordinator] = []
@@ -13,13 +13,13 @@ class AppCoordinator: Coordinator, LocationCoordinateDelegate {
     
     func start() {
         window?.makeKeyAndVisible()
-        onboardingCoordinator()
+        if UserDefaults.standard.bool(forKey: "isConnected") {
+            homeCoordinator()
+        } else {
+            onboardingCoordinator()
+        }
     }
-    
-    func didTapToKnowCoordinate(locationCoordinate: [Double]?) {
-        locationCoor = locationCoordinate
-    }
-    
+
     func onboardingCoordinator() {
         navigation = UINavigationController()
         window?.rootViewController = navigation
@@ -35,7 +35,6 @@ class AppCoordinator: Coordinator, LocationCoordinateDelegate {
         window?.rootViewController = navigation
         
         let homePageCoordiantor = HomePageCoordinator(navigation: navigation as! UINavigationController, coreLocation: locationCoor)
-        print(locationCoor)
         homePageCoordiantor.parent = self
         childrenCoordinators.append(homePageCoordiantor)
         homePageCoordiantor.start()

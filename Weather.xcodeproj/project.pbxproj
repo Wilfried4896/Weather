@@ -45,10 +45,8 @@
 		EC7916DE293CAF6B0050CAD9 /* DetailByHourMoreInfoTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7916DD293CAF6B0050CAD9 /* DetailByHourMoreInfoTableCell.swift */; };
 		EC7916E0293CBB210050CAD9 /* StackViewEtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7916DF293CBB210050CAD9 /* StackViewEtension.swift */; };
 		EC7C54ED2939F9FB00E57387 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7C54EC2939F9FB00E57387 /* StringExtension.swift */; };
-		EC7C54F4293A7D7D00E57387 /* weatherHour.json in Resources */ = {isa = PBXBuildFile; fileRef = EC7C54F3293A7D7D00E57387 /* weatherHour.json */; };
 		EC7C54F6293AA18E00E57387 /* WeatherHourTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7C54F5293AA18E00E57387 /* WeatherHourTableCell.swift */; };
 		EC7C54F8293ABF6C00E57387 /* WeatherDayTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7C54F7293ABF6C00E57387 /* WeatherDayTableCell.swift */; };
-		EC7C54FA293AC16700E57387 /* weatherDay.json in Resources */ = {isa = PBXBuildFile; fileRef = EC7C54F9293AC16700E57387 /* weatherDay.json */; };
 		ECA00F002969A25D0043FEFA /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA00EFF2969A25D0043FEFA /* ViewModel.swift */; };
 		ECA00F082969B3300043FEFA /* EmptyPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA00F072969B3300043FEFA /* EmptyPageView.swift */; };
 		ECA00F0A2969B9EF0043FEFA /* SearchPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA00F092969B9EF0043FEFA /* SearchPageView.swift */; };
@@ -93,10 +91,8 @@
 		EC7916DD293CAF6B0050CAD9 /* DetailByHourMoreInfoTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailByHourMoreInfoTableCell.swift; sourceTree = "<group>"; };
 		EC7916DF293CBB210050CAD9 /* StackViewEtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackViewEtension.swift; sourceTree = "<group>"; };
 		EC7C54EC2939F9FB00E57387 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
-		EC7C54F3293A7D7D00E57387 /* weatherHour.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = weatherHour.json; sourceTree = "<group>"; };
 		EC7C54F5293AA18E00E57387 /* WeatherHourTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherHourTableCell.swift; sourceTree = "<group>"; };
 		EC7C54F7293ABF6C00E57387 /* WeatherDayTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDayTableCell.swift; sourceTree = "<group>"; };
-		EC7C54F9293AC16700E57387 /* weatherDay.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = weatherDay.json; sourceTree = "<group>"; };
 		ECA00EFF2969A25D0043FEFA /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		ECA00F072969B3300043FEFA /* EmptyPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPageView.swift; sourceTree = "<group>"; };
 		ECA00F092969B9EF0043FEFA /* SearchPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPageView.swift; sourceTree = "<group>"; };
@@ -172,8 +168,6 @@
 				EC74F93C2937B1760010CDFF /* VC */,
 				EC74F9352937B0D10010CDFF /* Coordinators */,
 				EC74F9322937B07D0010CDFF /* Extension */,
-				EC7C54F3293A7D7D00E57387 /* weatherHour.json */,
-				EC7C54F9293AC16700E57387 /* weatherDay.json */,
 			);
 			path = Weather;
 			sourceTree = "<group>";
@@ -345,8 +339,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC74F9252937AFD30010CDFF /* LaunchScreen.storyboard in Resources */,
-				EC7C54FA293AC16700E57387 /* weatherDay.json in Resources */,
-				EC7C54F4293A7D7D00E57387 /* weatherHour.json in Resources */,
 				EC74F9222937AFD30010CDFF /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

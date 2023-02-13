@@ -186,21 +186,16 @@ class HomeTableCell: UITableViewCell {
         }
     }
     
-    func setUp(homePageData: DataDays) {
+    func setUp(homePageData: Dayly) {
         weatherTempLabel.text = homePageData.min_temp.concervCelcusFahrenheit + "/" + homePageData.max_temp.concervCelcusFahrenheit
         weatherPrincipeLabel.text = homePageData.temp.concervCelcusFahrenheit
         sunriseLabel.text = "\(Double(homePageData.sunrise_ts).toDate)"
         sunsetLabel.text = "\(Double(homePageData.sunset_ts).toDate)"
         windLabel.text = homePageData.wind_spd.conversMileKilometr
         precipitationLabel.text = "\(Int(homePageData.pop.rounded()))%"
-        dateTimeLabel.text = "\(Date().dateShort),  \(homePageData.datetime.toFullDateHome)"
-        descriptionLabel.text = homePageData.weather.descriptionIcon
-        
-        guard let dhi = homePageData.max_dhi else {
-            numberNolabel.text = "\(0)"
-            return
-        }
-        numberNolabel.text = "\(Int(dhi.rounded()))"
+        dateTimeLabel.text = "\(Date().dateShort),  \(homePageData.datetime!.toFullDateHome)"
+        descriptionLabel.text = homePageData.descriptionIcon
+        numberNolabel.text = "\(Int(homePageData.max_dhi.rounded()))"
     }
 }
 
