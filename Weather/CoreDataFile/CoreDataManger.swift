@@ -153,22 +153,32 @@ class CoreDataManager {
     
     func fetchWeatherHourly(complition: @escaping ([WeatherCityHourly]) -> Void) {
         var weatherHourly = [WeatherCityHourly]()
+        let dispatchGroup = DispatchGroup()
         
+        dispatchGroup.enter()
         do {
             weatherHourly = try persistentContainer.viewContext.fetch(fetchResquestWeatherCity)
-            complition(weatherHourly)
+            dispatchGroup.notify(queue: .main) {
+                complition(weatherHourly)
+            }
         } catch {
+            dispatchGroup.leave()
             print("\(error.localizedDescription)")
         }
     }
     
     func fetchWeatherDaily(complition: @escaping ([WeatherCityDaily]) -> Void) {
         var weatherCityDaily = [WeatherCityDaily]()
+        let dispatchGroup = DispatchGroup()
         
+        dispatchGroup.enter()
         do {
             weatherCityDaily = try persistentContainer.viewContext.fetch(fetchRequestWeatherDaily)
-            complition(weatherCityDaily)
+            dispatchGroup.notify(queue: .main) {
+                complition(weatherCityDaily)
+            }
         } catch {
+            dispatchGroup.leave()
             print("\(error.localizedDescription)")
         }
     }
