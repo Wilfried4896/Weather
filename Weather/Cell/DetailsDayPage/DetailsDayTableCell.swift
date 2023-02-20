@@ -226,36 +226,30 @@ class DetailsDayTableCell: UITableViewCell {
         }
     }
     
-    func setUpLow(dataDayLow: DataDays) {
+    func setUpLow(dataDayLow: Dayly) {
         titleLabel.text = "День"
         feelingValueLabel.text = dataDayLow.max_temp.concervCelcusFahrenheit
-        tempIcon.image = UIImage(named: dataDayLow.weather.icon)
+        tempIcon.image = UIImage(named: dataDayLow.icon ?? "")
         tempLabel.text = dataDayLow.high_temp.concervCelcusFahrenheit
-        descriptionLabel.text = dataDayLow.weather.descriptionIcon
-        windValueLabel.text = "\(dataDayLow.wind_spd.conversMileKilometr) \(dataDayLow.wind_cdir)"
-        
-        if let dhi = dataDayLow.max_dhi {
-            sunValueLabel.text = "\(Int(dhi.rounded()))"
-        } else {
-            sunValueLabel.text = "0"
-        }
+        descriptionLabel.text = dataDayLow.descriptionIcon
+        windValueLabel.text = dataDayLow.wind_spd.conversMileKilometr + " " + dataDayLow.wind_cdir!
+     
+        sunValueLabel.text = "\(Int(dataDayLow.max_dhi.rounded()))"
+    
         rainValueLabel.text = "\(Int(dataDayLow.pop.rounded()))%"
         precipetationValueLabel.text = "\(dataDayLow.clouds)%"
     }
     
-    func setUpNight(dataDayNigth: DataDays) {
+    func setUpNight(dataDayNigth: Dayly) {
         titleLabel.text = "Ночь"
         feelingValueLabel.text = dataDayNigth.app_min_temp.concervCelcusFahrenheit
-        tempIcon.image = UIImage(named: dataDayNigth.weather.icon)
+        tempIcon.image = UIImage(named: dataDayNigth.icon ?? "")
         tempLabel.text = dataDayNigth.low_temp.concervCelcusFahrenheit
-        descriptionLabel.text = dataDayNigth.weather.descriptionIcon
-        windValueLabel.text = dataDayNigth.wind_spd.conversMileKilometr +  "\(dataDayNigth.wind_cdir)"
+        descriptionLabel.text = dataDayNigth.descriptionIcon
+        windValueLabel.text = dataDayNigth.wind_spd.conversMileKilometr + " " + dataDayNigth.wind_cdir!
         
-        if let dhi = dataDayNigth.max_dhi {
-            sunValueLabel.text = "\(Int(dhi.rounded()))"
-        } else {
-            sunValueLabel.text = "0"
-        }
+        sunValueLabel.text = "\(Int(dataDayNigth.max_dhi.rounded()))"
+      
         rainValueLabel.text = "\(Int(dataDayNigth.pop.rounded()))%"
         precipetationValueLabel.text = "\(dataDayNigth.clouds)%"
     }

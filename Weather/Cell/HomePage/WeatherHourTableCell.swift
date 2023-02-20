@@ -1,16 +1,17 @@
 
 import UIKit
 import SnapKit
+import CoreData
 
 protocol WeatherHourDelegate: AnyObject {
     func didTapInfo()
 }
 
-class WeatherHourTableCell: UITableViewCell {
+class WeatherHourTableCell: UITableViewCell, NSFetchedResultsControllerDelegate {
     static let identifier = "WeatherHourTableCell"
     weak var delegate: WeatherHourDelegate?
     
-    var dataWeatherHour = [Hourly]() {
+    var weatherHourly: [Hourly] = [] {
         didSet {
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
@@ -29,7 +30,6 @@ class WeatherHourTableCell: UITableViewCell {
     
     lazy var collectionView: UICollectionView = {
         let viewLayout = UICollectionViewFlowLayout()
-//        viewLayout.minimumInteritemSpacing = 5
         viewLayout.scrollDirection = .horizontal
         let collection = UICollectionView(frame: .zero, collectionViewLayout: viewLayout)
         collection.register(WeatherHoursCell.self, forCellWithReuseIdentifier: WeatherHoursCell.identifier)
@@ -61,6 +61,10 @@ class WeatherHourTableCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        self.collectionView.reloadData()
+    }
+    
     @objc func didTapMoreInfo() {
         delegate?.didTapInfo()
     }
@@ -69,13 +73,15 @@ class WeatherHourTableCell: UITableViewCell {
 
 extension WeatherHourTableCell: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 15
+        return weatherHourly.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WeatherHoursCell.identifier, for: indexPath) as! WeatherHoursCell
         cell.layer.cornerRadius = 22
-       // cell.setUp(hour: dataWeatherHour[indexPath.item])
+        weatherHourly.forEach { hourly in
+            cell.setUp(hour: hourly)
+        }
         return cell
     }
     

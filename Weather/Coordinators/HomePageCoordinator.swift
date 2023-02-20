@@ -45,7 +45,7 @@ class HomePageCoordinator: Coordinator, HomePageDelegate {
     func indexPathSelect(indexS: IndexPath) {
         let vc = DetailDayForecastController()
         vc.coordinator = self
-        vc.indexSelect = indexS.row
+        vc.indexSelect = indexS
         navigation.pushViewController(vc, animated: true)
     }
 }

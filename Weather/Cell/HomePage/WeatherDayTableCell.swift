@@ -1,28 +1,19 @@
 
 import UIKit
 import SnapKit
+import CoreData
 
-class WeatherDayTableCell: UITableViewCell {
-    
+class WeatherDayTableCell: UITableViewCell, NSFetchedResultsControllerDelegate {
     static let identifier = "WeatherDayTableCell"
     weak var delegateShowDetailDay: DateShowDelegate?
-    
-    var changeDay = 7 {
+
+    var weatherDaily: [Dayly] = [] {
         didSet {
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
             }
         }
     }
-    
-    var dataWeatherDay = [Dayly]() {
-        didSet {
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
-        }
-    }
-    
     lazy var forecastLabel: UILabel = {
         let forecast = UILabel()
         forecast.text = "Ежедневный прогноз"
@@ -35,7 +26,7 @@ class WeatherDayTableCell: UITableViewCell {
         moreInfoHour.setTitle("16 дней", for: .normal)
         moreInfoHour.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         moreInfoHour.setTitleColor(.black, for: .normal)
-        moreInfoHour.addTarget(self, action: #selector(didTapMoreInfo), for: .touchUpInside)
+       // moreInfoHour.addTarget(self, action: #selector(didTapMoreInfo), for: .touchUpInside)
         return moreInfoHour
     }()
     
@@ -77,28 +68,24 @@ class WeatherDayTableCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc func didTapMoreInfo() {
-        guard changeDay == 7 else {
-            moreInfoDayLabel.setTitle("16 дней", for: .normal)
-            changeDay = 7
-            return
-        }
-        moreInfoDayLabel.setTitle("7 дней", for: .normal)
-        changeDay = 16
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        self.collectionView.reloadData()
     }
 }
 
 extension WeatherDayTableCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return changeDay
+        return weatherDaily.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WeatherDaysCell.identifier, for: indexPath) as! WeatherDaysCell
         cell.backgroundColor = UIColor(red: 233/255, green: 238/255, blue: 250/255, alpha: 1)
         cell.layer.cornerRadius = 10
-       // cell.setUpCell(day: dataWeatherDay[indexPath.item])
+        weatherDaily.forEach { daily in
+            cell.setUpCell(day: daily)
+        }
         return cell
     }
     

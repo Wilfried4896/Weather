@@ -7,7 +7,9 @@ class HomePageController: UIViewController {
     
     weak var coordinator: HomePageCoordinator?
     private var contentView: [UIView] = []
+    private let viewModel = WeatherViewModel()
     
+    let currentValue = 0
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.isPagingEnabled = true
@@ -42,20 +44,14 @@ class HomePageController: UIViewController {
         return tableview
     }()
     
-    let fetchControllerDaily: NSFetchedResultsController<WeatherCityDaily> = {
-        let fetchResquest = NSFetchRequest<WeatherCityDaily>(entityName: "WeatherCityDaily")
-        fetchResquest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
-        
-        let frc = NSFetchedResultsController(
-            fetchRequest: fetchResquest,
-            managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext,
-            sectionNameKeyPath: nil,
-            cacheName: nil)
-        
-        return frc
-    }()
-    
-    var dataWeatherHour = [Hourly]()
+    var currentWeatherHour = [WeatherCityHourly]()
+    var currentWeather = [WeatherCityDaily]() {
+        didSet {
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+    }
     
     lazy var pageControler: UIPageControl = {
         let pageControler = UIPageControl()
@@ -77,32 +73,34 @@ class HomePageController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         configurationHomePage()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        do {
-            try fetchControllerDaily.performFetch()
-        } catch {
-            print(error.localizedDescription)
+       
+        DispatchQueue.main.async {
+            CoreDataManager.shared.fetchWeatherDaily { daily in
+                self.currentWeather = daily
+            }
+            
+            CoreDataManager.shared.fetchWeatherHourly { hourly in
+                self.currentWeatherHour = hourly
+            }
         }
     }
     
     private func configurationHomePage() {
-        
         view.backgroundColor = .systemBackground
         view.addSubview(scrollView)
         
-        let locationCoord = UserDefaults.standard.array(forKey: "locationCoord") as? [Double]
-        
-        if  let locationCoord, locationCoord.isEmpty {
+        let locationCoord = UserDefaults.standard.array(forKey: "locationCoord") as! [Double]
+        if locationCoord.isEmpty {
             contentView = [emptyPageView, searchPageViewView]
         } else {
             contentView = [tableView, searchPageViewView]
         }
-        
+       
         contentView.forEach { view in
             scrollView.addSubview(view)
         }
@@ -164,17 +162,9 @@ class HomePageController: UIViewController {
         }
         let addAction = UIAlertAction(title: "Search", style: .default) { _ in
             guard let text = alert.textFields?[0].text else { return }
-            let textField = text
-            LocationManager.shared.getCoordinate(addressString: textField) { location in
-                let latitude = location.coordinate.latitude
-                let longitude = location.coordinate.longitude
-                WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/hourly?lat=\(latitude)&lon=\(longitude)&hours&hours=24", decodable: WeatherHours.self) { result in
-                  //  self.weatherHours = result
-                }
-                WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/daily?lat=\(latitude)&lon=\(longitude)&hours", decodable: WeatherDays.self) { result in
-                  //  self.weatherDay = result
-                   // self.weatherSearch?.append(result)
-                }
+            LocationManager.shared.getCoordinate(addressString: text) { [weak self] location in
+                print(location.coordinate)
+                self?.viewModel.getWeatherData(location.coordinate.latitude, location.coordinate.longitude)
             }
         }
         
@@ -189,10 +179,6 @@ extension HomePageController: UIScrollViewDelegate, NSFetchedResultsControllerDe
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pageNumber = round(scrollView.contentOffset.x / view.frame.size.width)
         pageControler.currentPage = Int(pageNumber)
-    }
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        tableView.reloadData()
     }
     
     func indexDelected(indexSelected: IndexPath) {
@@ -217,7 +203,7 @@ extension HomePageController: UITableViewDelegate, UITableViewDataSource, DateSh
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return fetchControllerDaily.sections?[0].numberOfObjects ?? 1
+            return 1
         case 1:
             return 1
         case 2:
@@ -231,22 +217,27 @@ extension HomePageController: UITableViewDelegate, UITableViewDataSource, DateSh
         switch indexPath.section {
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCell.shared, for: indexPath) as! HomeTableCell
-            let weatherCurrent = fetchControllerDaily.object(at: indexPath)
-            
-            let weatherDaily = (weatherCurrent.daily!.allObjects as! [Dayly]).sorted(by: { $0.datetime! < $1.datetime! })
-            cell.setUp(homePageData: weatherDaily.first!)
+            if let current = currentWeather.first {
+                let daily = current.daily?.allObjects as! [Dayly]
+                if let dailyCurrent = daily.first {
+                    cell.setUp(homePageData: dailyCurrent)
+                }
+            }
             return cell
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: WeatherHourTableCell.identifier, for: indexPath) as! WeatherHourTableCell
-            //let fetchHourly = CoreDataManager.shared.weatherCity.first!.weatherHourly as? [Hourly]
-            
-            //cell.dataWeatherHour = fetchHourly!
+            if let currentHourly = currentWeatherHour.first {
+                let hourly = currentHourly.weatherHourly?.allObjects as! [Hourly]
+                cell.weatherHourly = hourly
+            }
             cell.delegate = self
             return cell
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: WeatherDayTableCell.identifier, for: indexPath) as! WeatherDayTableCell
             cell.delegateShowDetailDay = self
-          //  cell.dataWeatherDay = dataWeatherDay
+            if let daily = currentWeather.first {
+                cell.weatherDaily = daily.daily?.allObjects as! [Dayly]
+            }
             return cell
         default:
             return tableView.dequeueReusableCell(withIdentifier: "", for: indexPath) as UITableViewCell

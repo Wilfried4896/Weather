@@ -11,9 +11,8 @@ class DateShowTableCell: UITableViewCell {
     static let shared = "DateShowTableCell"
     var currentSelected: IndexPath?
     weak var delegateShowDetailDay: DateShowDelegate?
-    private let notification = NotificationCenter.default
     
-    var dataWeatherDay: [DataDays] = []
+    var dataWeatherDay: [Dayly] = []
     
     lazy var collectionView: UICollectionView = {
         let viewLayout = UICollectionViewFlowLayout()
@@ -29,41 +28,17 @@ class DateShowTableCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        notification.addObserver(self, selector: #selector(indexPathFromHomeVC(_:)), name: Notification.Name("indexPath"), object: nil)
-        
+       
         contentView.addSubview(collectionView)
-        
-        if let getForBundle = getForBundle() {
-            dataWeatherDay = getForBundle.data
-        }
-        
+    
         collectionView.snp.makeConstraints { make in
             make.leading.trailing.top.bottom.equalTo(contentView)
             make.height.equalTo(55)
         }
     }
     
-    @objc func indexPathFromHomeVC(_ notification: Notification) {
-       
-    }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func getForBundle() -> WeatherDays? {
-        if let url = Bundle.main.path(forResource: "weatherDay", ofType: "json") {
-                do {
-                    let data = try Data(contentsOf: URL(filePath: url))
-                    let decoder = JSONDecoder()
-                    let jsonData = try decoder.decode(WeatherDays.self, from: data)
-                    return jsonData
-                } catch {
-                    print("error:\(error)")
-                }
-            }
-            return nil
     }
 }
 

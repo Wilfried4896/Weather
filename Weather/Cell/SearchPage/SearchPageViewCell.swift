@@ -57,15 +57,15 @@ class SearchPageViewCell: UICollectionViewCell {
         }
     }
     
-    func setUp(with day: DataDays) {
-        dayLabel.text = day.datetime.toDay
+    func setUp(with day: Dayly) {
+        dayLabel.text = day.datetime!.toDay
         if day.pop == 0 {
             popLabel.text = " "
         } else {
             popLabel.text = "\(Int(day.pop))%"
         }
 
-        imagePop.image = UIImage(named: "\(day.weather.icon)")
+        imagePop.image = UIImage(named: day.icon ?? "")
         tempLabel.text = day.app_min_temp.concervCelcusFahrenheit + "/" + day.app_max_temp.concervCelcusFahrenheit
     }
 }

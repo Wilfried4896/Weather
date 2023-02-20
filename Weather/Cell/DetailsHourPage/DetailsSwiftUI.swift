@@ -1,29 +1,18 @@
 
 import SwiftUI
 import Charts
-import Foundation
-
-
+import CoreData
 
 struct Contients: View {
-    var getForBundle: [DataHours] {
-            if let url = Bundle.main.path(forResource: "weatherHour", ofType: "json") {
-                    do {
-                        let data = try Data(contentsOf: URL(filePath: url))
-                        let decoder = JSONDecoder()
-                        let jsonData = try decoder.decode(WeatherHours.self, from: data)
-                        return jsonData.data
-                    } catch {
-                        print("error:\(error)")
-                    }
-                }
-                return []
-        }
     
+    var weatherHourly: [Hourly]
     
+    init(weatherHourly: [Hourly]) {
+        self.weatherHourly = weatherHourly
+    }
     
     var body: some View {
-        var listData = Array(getForBundle.prefix(10))
+        let listData = Array(weatherHourly.prefix(10))
         let curColor = Color(hue: 0.33, saturation: 0.81, brightness: 0.76)
         let curGradient = LinearGradient(
             gradient: Gradient (
@@ -41,14 +30,14 @@ struct Contients: View {
             Chart {
                 ForEach(listData) { list in
                     LineMark(
-                        x: .value("", list.timestamp_local.toTime),
+                        x: .value("", list.timestamp_local!.toTime),
                         y: .value("", list.app_temp.concervCelcusFahrenheit)
                     )
                     .interpolationMethod(.catmullRom)
                     .lineStyle(StrokeStyle(lineWidth: 1))
                     .symbolSize(20)
                     
-                    PointMark(x: .value("", list.timestamp_local.toTime),
+                    PointMark(x: .value("", list.timestamp_local!.toTime),
                               y: .value("", list.app_temp.concervCelcusFahrenheit)
                     )
                     .annotation {
@@ -61,7 +50,7 @@ struct Contients: View {
                             .frame(width: 5)
                     }
                    
-                    AreaMark(x: .value("", list.timestamp_local.toTime),
+                    AreaMark(x: .value("", list.timestamp_local!.toTime),
                               y: .value("", list.app_temp.concervCelcusFahrenheit)
                     )
                     .interpolationMethod(.catmullRom)
@@ -74,19 +63,19 @@ struct Contients: View {
             
             Chart {
                 ForEach(listData) { list in
-                    LineMark(x: .value("", list.timestamp_local.toTime),
+                    LineMark(x: .value("", list.timestamp_local!.toTime),
                              y: .value("", list.app_temp)
                     )
                     .interpolationMethod(.catmullRom)
                     .lineStyle(StrokeStyle(lineWidth: 1))
                     
                     PointMark(
-                        x: .value("", list.timestamp_local.toTime),
+                        x: .value("", list.timestamp_local!.toTime),
                         y: .value("", list.app_temp)
                     )
                     .annotation(content: {
                         VStack(spacing: 0) {
-                            Image(list.weather.icon)
+                            Image(list.icon!)
                                 .resizable()
                                 .frame(width: 20, height: 20)
                             Text("\(Int(list.pop))%")
@@ -114,3 +103,4 @@ struct Contients: View {
         .padding(.top, 10)
     }
 }
+

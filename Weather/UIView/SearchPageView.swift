@@ -1,23 +1,10 @@
 
 import UIKit
 import SnapKit
+import CoreData
 
 class SearchPageView: UIView {
 
-    var weatherDay = [WeatherDays]() {
-        didSet {
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
-        }
-    }
-    
-    lazy var searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.delegate = self
-        return searchBar
-    }()
-    
     lazy var collectionView: UICollectionView = {
         let viewLayout = UICollectionViewFlowLayout()
         viewLayout.scrollDirection = .vertical
@@ -29,18 +16,33 @@ class SearchPageView: UIView {
         return collection
     }()
     
+    let fetchControllerDaily: NSFetchedResultsController<WeatherCityDaily> = {
+        let fetchResquest = NSFetchRequest<WeatherCityDaily>(entityName: "WeatherCityDaily")
+        fetchResquest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        
+        let frc = NSFetchedResultsController(
+            fetchRequest: fetchResquest,
+            managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil)
+        
+        return frc
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        addSubview(searchBar)
         addSubview(collectionView)
         
-        searchBar.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview()
+        do {
+            try fetchControllerDaily.performFetch()
+            fetchControllerDaily.delegate = self
+        } catch {
+            print("\(error.localizedDescription)")
         }
-        
+
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom).offset(10)
+            make.top.equalToSuperview()
             make.bottom.equalToSuperview().inset(10)
             make.trailing.leading.equalToSuperview()
         }
@@ -53,19 +55,16 @@ class SearchPageView: UIView {
 }
 extension SearchPageView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return weatherDay.count
+        return fetchControllerDaily.sections?[section].numberOfObjects ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if weatherDay.isEmpty {
-            let cellEmpty = UICollectionViewCell()
-            return cellEmpty
-        } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchViewCell.shared, for: indexPath) as! SearchViewCell
-            cell.searchPageViewCell = weatherDay[indexPath.item].data
-            cell.setUp(with: weatherDay)
-            return cell
-        }
+       
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchViewCell.shared, for: indexPath) as! SearchViewCell
+        // cell.searchPageViewCell = weatherDay[indexPath.item].data
+        let weatherDaily = fetchControllerDaily.object(at: indexPath)
+        cell.setUp(with: weatherDaily)
+        return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -73,17 +72,8 @@ extension SearchPageView: UICollectionViewDataSource, UICollectionViewDelegateFl
     }
 }
 
-extension SearchPageView: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let searchText = searchBar.text else { return }
-        self.searchBar.endEditing(true)
-        LocationManager.shared.getCoordinate(addressString: searchText) { location in
-            let latitude = location.coordinate.latitude
-            let longitude = location.coordinate.longitude
-            print(location.coordinate)
-            WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/hourly?lat=\(latitude)&lon=\(longitude)&hours&hours=24", decodable: WeatherHours.self) { result in
-                print(result.city_name)
-            }
-        }
+extension SearchPageView: NSFetchedResultsControllerDelegate {
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        self.collectionView.reloadData()
     }
 }

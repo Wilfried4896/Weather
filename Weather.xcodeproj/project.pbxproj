@@ -47,7 +47,7 @@
 		EC7C54ED2939F9FB00E57387 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7C54EC2939F9FB00E57387 /* StringExtension.swift */; };
 		EC7C54F6293AA18E00E57387 /* WeatherHourTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7C54F5293AA18E00E57387 /* WeatherHourTableCell.swift */; };
 		EC7C54F8293ABF6C00E57387 /* WeatherDayTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7C54F7293ABF6C00E57387 /* WeatherDayTableCell.swift */; };
-		ECA00F002969A25D0043FEFA /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA00EFF2969A25D0043FEFA /* ViewModel.swift */; };
+		ECA00F002969A25D0043FEFA /* WeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA00EFF2969A25D0043FEFA /* WeatherViewModel.swift */; };
 		ECA00F082969B3300043FEFA /* EmptyPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA00F072969B3300043FEFA /* EmptyPageView.swift */; };
 		ECA00F0A2969B9EF0043FEFA /* SearchPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA00F092969B9EF0043FEFA /* SearchPageView.swift */; };
 /* End PBXBuildFile section */
@@ -93,7 +93,7 @@
 		EC7C54EC2939F9FB00E57387 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		EC7C54F5293AA18E00E57387 /* WeatherHourTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherHourTableCell.swift; sourceTree = "<group>"; };
 		EC7C54F7293ABF6C00E57387 /* WeatherDayTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDayTableCell.swift; sourceTree = "<group>"; };
-		ECA00EFF2969A25D0043FEFA /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		ECA00EFF2969A25D0043FEFA /* WeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewModel.swift; sourceTree = "<group>"; };
 		ECA00F072969B3300043FEFA /* EmptyPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPageView.swift; sourceTree = "<group>"; };
 		ECA00F092969B9EF0043FEFA /* SearchPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -214,7 +214,7 @@
 				EC74F9402937B29B0010CDFF /* ModelWeather.swift */,
 				EC74F9422937B2D30010CDFF /* WeatherManager.swift */,
 				EC76E7E4294F321B00BB0A02 /* LocationManager.swift */,
-				ECA00EFF2969A25D0043FEFA /* ViewModel.swift */,
+				ECA00EFF2969A25D0043FEFA /* WeatherViewModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -359,7 +359,7 @@
 				EC74F94A2937E43B0010CDFF /* WeatherHoursCell.swift in Sources */,
 				EC74F93B2937B14B0010CDFF /* OnboardingCoordinator.swift in Sources */,
 				EC7916D6293BF1770050CAD9 /* ParameterController.swift in Sources */,
-				ECA00F002969A25D0043FEFA /* ViewModel.swift in Sources */,
+				ECA00F002969A25D0043FEFA /* WeatherViewModel.swift in Sources */,
 				EC7C54ED2939F9FB00E57387 /* StringExtension.swift in Sources */,
 				EC74F9342937B0990010CDFF /* LabelExtension.swift in Sources */,
 				EC71215F298C48A000C446E5 /* CoreDataManger.swift in Sources */,
@@ -438,6 +438,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -498,6 +499,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -528,9 +530,10 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 5V4PQH75UR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Weather/App/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Please allow location access to use our app!";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";
@@ -555,11 +558,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5V4PQH75UR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Weather/App/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Please allow location access to use our app!";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";

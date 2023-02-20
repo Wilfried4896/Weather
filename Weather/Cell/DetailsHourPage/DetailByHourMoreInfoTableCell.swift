@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import CoreData
 
 class DetailByHourMoreInfoTableCell: UITableViewCell {
     static let shared = "DetailByHourMoreInfoTableCell"
@@ -189,10 +190,10 @@ class DetailByHourMoreInfoTableCell: UITableViewCell {
         }
     }
     
-    func setUp(hourDescprition: DataHours) {
-        feelingLabel.text = "Преимуществен..по ощущению \(hourDescprition.temp.concervCelcusFahrenheit)"
-        dateTimeLabel.text = hourDescprition.datetime.toDateFull
-        hourLabel.text = hourDescprition.timestamp_local.toTime
+    func setUp(hourDescprition: Hourly) {
+        feelingLabel.text = "Преимуществен..по ощущению " + hourDescprition.temp.concervCelcusFahrenheit
+        dateTimeLabel.text = hourDescprition.datetime?.toDateFull
+        hourLabel.text = hourDescprition.timestamp_local?.toTime
         tempLabel.text = hourDescprition.temp.concervCelcusFahrenheit
         windValeurLabel.text = hourDescprition.wind_spd.conversMileKilometr
         precipitationValeurLabel.text = "\(Int(hourDescprition.pop.rounded()))%"

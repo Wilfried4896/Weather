@@ -10,12 +10,22 @@ import Foundation
 
 struct WeatherHours: Codable {
     var city_name: String
-    var data: [DataHours]
+    var hourly: [DataHours]
+    
+    enum CodingKeys: String, CodingKey {
+        case city_name
+        case hourly = "data"
+    }
 }
 
 struct WeatherDays: Codable {
     var city_name: String
-    var data: [DataDays]
+    var daily: [DataDays]
+    
+    enum CodingKeys: String, CodingKey {
+        case city_name
+        case daily = "data"
+    }
 }
 
 struct DataHours: Codable, Identifiable {

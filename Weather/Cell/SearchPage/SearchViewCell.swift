@@ -5,14 +5,6 @@ import SnapKit
 class SearchViewCell: UICollectionViewCell {
     static let shared = "SearchViewCell"
     
-    var searchPageViewCell = [DataDays]() {
-        didSet {
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
-        }
-    }
-    
     lazy var imageWeather: UIImageView = {
         let image = UIImageView()
         image.snp.makeConstraints { make in
@@ -92,25 +84,30 @@ class SearchViewCell: UICollectionViewCell {
         }
     }
     
-    func setUp(with dataDays: [WeatherDays]) {
-        dataDays.forEach { weatherDays in
-            cityLabel.text = weatherDays.city_name
-            imageWeather.image = UIImage(named: weatherDays.data[0].weather.icon)
-            labelWeather.text = weatherDays.data[0].temp.concervCelcusFahrenheit
-            descriptionLabel.text = weatherDays.data[0].weather.descriptionIcon
+    func setUp(with weatherDays: WeatherCityDaily) {
+        cityLabel.text = weatherDays.title
+        let daily = (weatherDays.daily!.allObjects as! [Dayly]).sorted(by: { $0.datetime! < $1.datetime! })
+        if let weather = daily.first {
+            imageWeather.image = UIImage(named: weather.icon ?? "")
+            labelWeather.text = weather.temp.concervCelcusFahrenheit
+            descriptionLabel.text = weather.descriptionIcon
         }
     }
 }
 
+
 extension SearchViewCell: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return searchPageViewCell.count
+        return 1
+        //searchPageViewCell.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchPageViewCell.shared, for: indexPath) as! SearchPageViewCell
-        
-        cell.setUp(with: searchPageViewCell[indexPath.item])
+//        searchPageViewCell.forEach { weatherDays in
+//            let daily = (weatherDays.daily!.allObjects as! [Dayly]).sorted(by: { $0.datetime! < $1.datetime! })
+//            cell.setUp(with: daily[indexPath.item])
+//        }
         return cell
     }
     

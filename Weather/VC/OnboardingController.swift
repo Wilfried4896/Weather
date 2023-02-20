@@ -2,12 +2,13 @@
 import UIKit
 import SnapKit
 import CoreLocation
-import CoreData
 
 class OnboardingController: UIViewController {
     weak var coordinator: OnboardingCoordinator?
     private let notificationCenter = NotificationCenter.default
     let type = CLLocationManager()
+    private let viewModel = WeatherViewModel()
+    var locationCoord: [Double] = []
     
     lazy var imageView: UIImageView = {
         let image = UIImageView()
@@ -58,7 +59,6 @@ class OnboardingController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        UserDefaults.standard.set(true, forKey: "isConnected")
         configurationOnboarding()
     }
     
@@ -117,25 +117,23 @@ class OnboardingController: UIViewController {
                 case .restricted, .denied, .notDetermined: break
                    
                 case .authorizedAlways, .authorizedWhenInUse:
-                    let locationCoord = [location.coordinate.latitude, location.coordinate.longitude]
-                    WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/hourly?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&hours=24", decodable: WeatherHours.self) { result in
-                        CoreDataManager.shared.saveDataCityWeatherHourly(from: result)
-                    }
-                    WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/daily?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)", decodable: WeatherDays.self) { result in
-                        CoreDataManager.shared.saveDataCityWeatherDayly(weatherCityDaily: result)
-                    }
-                    UserDefaults.standard.set(locationCoord, forKey: "locationCoord")
+                    self?.locationCoord = [location.coordinate.latitude, location.coordinate.longitude]
+                    strongeSelf.viewModel.getWeatherData(location.coordinate.latitude, location.coordinate.longitude)
+                    UserDefaults.standard.set(self?.locationCoord, forKey: "locationCoord")
                     
                 @unknown default:
                     fatalError()
                 }
             }
+            UserDefaults.standard.set(true, forKey: "isConnected")
             strongeSelf.coordinator?.parent?.homeCoordinator()
         }
     }
     
    
     @objc func didTapDontUserLocalization() {
+        UserDefaults.standard.set(locationCoord, forKey: "locationCoord")
+        UserDefaults.standard.set(true, forKey: "isConnected")
         coordinator?.parent?.homeCoordinator()
     }
 }

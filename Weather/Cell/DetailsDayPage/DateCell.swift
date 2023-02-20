@@ -28,7 +28,7 @@ class DateCell: UICollectionViewCell {
         }
     }
     
-    func setUp(date: DataDays) {
-        dateLabel.text = "\(date.datetime.toFullDate)"
+    func setUp(date: Dayly) {
+        dateLabel.text = "\(date.datetime!.toFullDate)"
     }
 }

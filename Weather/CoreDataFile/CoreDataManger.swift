@@ -4,6 +4,7 @@ import CoreData
 
 class CoreDataManager {
     static let shared = CoreDataManager()
+    
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "CoreDataWeather")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
@@ -14,6 +15,12 @@ class CoreDataManager {
         container.viewContext.automaticallyMergesChangesFromParent = true
         return container
     }()
+    
+    private let fetchResquestHour = NSFetchRequest<Hourly>(entityName: "Hourly")
+    private let fetchResquestDay = NSFetchRequest<Dayly>(entityName: "Dayly")
+    private let fetchResquestWeatherCity = NSFetchRequest<WeatherCityHourly>(entityName: "WeatherCityHourly")
+    private let fetchRequestWeatherDaily = NSFetchRequest<WeatherCityDaily>(entityName: "WeatherCityDaily")
+    
     
     // MARK: - Core Data Saving support
     private func saveContext () {
@@ -28,39 +35,9 @@ class CoreDataManager {
         }
     }
     
-    private let fetchResquestHour = NSFetchRequest<Hourly>(entityName: "Hourly")
-    private let fetchResquestDay = NSFetchRequest<Dayly>(entityName: "Dayly")
-    private let fetchResquestWeatherCity = NSFetchRequest<WeatherCityHourly>(entityName: "WeatherCityHourly")
-
-//    func weatherCity(completionHandler: ([WeatherCityHourly]) -> Void ){
-//        let fectchResquest: NSFetchRequest<WeatherCityHourly> = WeatherCityHourly.fetchRequest()
-//        do {
-//            let weatherHourly = try persistentContainer.viewContext.fetch(fectchResquest)
-//            completionHandler(weatherHourly)
-//        } catch {
-//            print(error.localizedDescription)
-//            completionHandler([])
-//        }
-//    }
-    
-
-//    func weatherCityDaily() {
-//        let context = persistentContainer.viewContext
-//
-//        context.perform {
-//            let fectchResquest = NSFetchRequest<WeatherCityDaily>(entityName: "WeatherCityDaily")
-//            do {
-//                let weatherDaily = try context.fetch(fectchResquest)
-//                print("\(String(describing: weatherDaily.count)) weatherCityDaily")
-//            } catch {
-//                print(error.localizedDescription)
-//            }
-//        }
-//    }
-    
     func saveDataCityWeatherHourly(from weatherCity: WeatherHours) {
         self.persistentContainer.performBackgroundTask {[weak self] context in
-            self?.deleteObjHourlyFromCoreData(context: context)
+           // self?.deleteObjHourlyFromCoreData(context: context)
             self?.saveDataHoursToCoreData(weatherHourly: weatherCity, context: context)
             
             do {
@@ -73,7 +50,7 @@ class CoreDataManager {
     
     func saveDataCityWeatherDayly(weatherCityDaily: WeatherDays) {
         self.persistentContainer.performBackgroundTask {[weak self] context in
-            self?.deleteObjDaylyFromCoreData(context: context)
+           // self?.deleteObjDaylyFromCoreData(context: context)
             self?.saveDataDayToCoreData(weatherDayly: weatherCityDaily, context: context)
             
             do {
@@ -85,10 +62,25 @@ class CoreDataManager {
         }
     }
     
+    func upDate(from weatherCity: WeatherHours) {
+        self.persistentContainer.performBackgroundTask {[weak self] context in
+            self?.deleteObjHourlyFromCoreData(context: context)
+            self?.saveDataHoursToCoreData(weatherHourly: weatherCity, context: context)
+            
+            do {
+                try context.save()
+            } catch {
+                fatalError("weatherCity Error \(error.localizedDescription)")
+            }
+        }
+    }
+    
     private func saveDataHoursToCoreData(weatherHourly: WeatherHours, context: NSManagedObjectContext) {
         let cityEntity = WeatherCityHourly(context: context)
         cityEntity.cityName = weatherHourly.city_name
-        weatherHourly.data.forEach { dataHour in
+        cityEntity.date = Date()
+        
+        weatherHourly.hourly.forEach { dataHour in
             let hoursEntity = Hourly(context: context)
             hoursEntity.descriptionIcon = dataHour.weather.descriptionIcon
             hoursEntity.icon = dataHour.weather.icon
@@ -107,8 +99,11 @@ class CoreDataManager {
     
     private func saveDataDayToCoreData(weatherDayly: WeatherDays, context: NSManagedObjectContext) {
         let weatherDaily = WeatherCityDaily(context: context)
-        weatherDayly.data.forEach { dataDay in
-            let dayEntity = Dayly(context: context)
+        weatherDaily.title = weatherDayly.city_name
+        weatherDaily.date = Date()
+        let dayEntity = Dayly(context: context)
+        
+        weatherDayly.daily.forEach { dataDay in
             dayEntity.icon = dataDay.weather.icon
             dayEntity.descriptionIcon = dataDay.weather.descriptionIcon
             dayEntity.rh = dataDay.rh
@@ -131,8 +126,9 @@ class CoreDataManager {
             dayEntity.temp = dataDay.temp
             dayEntity.wind_cdir = dataDay.wind_cdir
             dayEntity.wind_spd = dataDay.wind_spd
-            dayEntity.weatherDaily = weatherDaily
+            //dayEntity.weatherDaily = weatherDaily
         }
+        weatherDaily.addToDaily(dayEntity)
     }
     
     private func deleteObjHourlyFromCoreData(context: NSManagedObjectContext) {
@@ -152,6 +148,28 @@ class CoreDataManager {
             try context.save()
         } catch {
             fatalError("Error deleting Data \(error)")
+        }
+    }
+    
+    func fetchWeatherHourly(complition: @escaping ([WeatherCityHourly]) -> Void) {
+        var weatherHourly = [WeatherCityHourly]()
+        
+        do {
+            weatherHourly = try persistentContainer.viewContext.fetch(fetchResquestWeatherCity)
+            complition(weatherHourly)
+        } catch {
+            print("\(error.localizedDescription)")
+        }
+    }
+    
+    func fetchWeatherDaily(complition: @escaping ([WeatherCityDaily]) -> Void) {
+        var weatherCityDaily = [WeatherCityDaily]()
+        
+        do {
+            weatherCityDaily = try persistentContainer.viewContext.fetch(fetchRequestWeatherDaily)
+            complition(weatherCityDaily)
+        } catch {
+            print("\(error.localizedDescription)")
         }
     }
 }
