@@ -6,14 +6,19 @@ import CoreData
 class WeatherDayTableCell: UITableViewCell, NSFetchedResultsControllerDelegate {
     static let identifier = "WeatherDayTableCell"
     weak var delegateShowDetailDay: DateShowDelegate?
-
-    var weatherDaily: [Dayly] = [] {
-        didSet {
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
-        }
-    }
+   
+    private var fetchController: NSFetchedResultsController<Dayly> = {
+        let request: NSFetchRequest<Dayly> = Dayly.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: "datetime", ascending: true)]
+        let fetchController = NSFetchedResultsController(
+            fetchRequest: request,
+            managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+        return fetchController
+    }()
+ 
     lazy var forecastLabel: UILabel = {
         let forecast = UILabel()
         forecast.text = "Ежедневный прогноз"
@@ -47,6 +52,14 @@ class WeatherDayTableCell: UITableViewCell, NSFetchedResultsControllerDelegate {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        do {
+            try fetchController.performFetch()
+            fetchController.delegate = self
+            
+        } catch {
+            print("WeatherTableCell \(error.localizedDescription)")
+        }
+        
         let stackView = UIStackView(arrangedSubviews: [forecastLabel, moreInfoDayLabel])
         stackView.horizontalDetail(nil)
         
@@ -76,16 +89,15 @@ class WeatherDayTableCell: UITableViewCell, NSFetchedResultsControllerDelegate {
 extension WeatherDayTableCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return weatherDaily.count
+        return fetchController.sections?[section].numberOfObjects ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WeatherDaysCell.identifier, for: indexPath) as! WeatherDaysCell
         cell.backgroundColor = UIColor(red: 233/255, green: 238/255, blue: 250/255, alpha: 1)
         cell.layer.cornerRadius = 10
-        weatherDaily.forEach { daily in
-            cell.setUpCell(day: daily)
-        }
+        let weatherDaily = fetchController.object(at: indexPath)
+        cell.setUpCell(day: weatherDaily)
         return cell
     }
     

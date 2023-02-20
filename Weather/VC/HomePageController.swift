@@ -44,14 +44,20 @@ class HomePageController: UIViewController {
         return tableview
     }()
     
-    var currentWeatherHour = [WeatherCityHourly]()
-    var currentWeather = [WeatherCityDaily]() {
-        didSet {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-    }
+    let fetchControllerDaily: NSFetchedResultsController<WeatherCityDaily> = {
+        let fetchResquest = NSFetchRequest<WeatherCityDaily>(entityName: "WeatherCityDaily")
+        fetchResquest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        fetchResquest.fetchLimit = 1
+        let frc = NSFetchedResultsController(
+            fetchRequest: fetchResquest,
+            managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil)
+        
+        return frc
+    }()
+    
+    var dataWeatherHour = [Hourly]()
     
     lazy var pageControler: UIPageControl = {
         let pageControler = UIPageControl()
@@ -74,33 +80,32 @@ class HomePageController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configurationHomePage()
+     
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-       
-        DispatchQueue.main.async {
-            CoreDataManager.shared.fetchWeatherDaily { daily in
-                self.currentWeather = daily
-            }
+        
+//        if fetchControllerDaily.fetchedObjects != nil {
             
-            CoreDataManager.shared.fetchWeatherHourly { hourly in
-                self.currentWeatherHour = hourly
-            }
+//        } else {
+//            contentView = [emptyPageView, searchPageViewView]
+//        }
+        
+        do {
+            try fetchControllerDaily.performFetch()
+            fetchControllerDaily.delegate = self
+            
+        } catch {
+            print(error.localizedDescription)
         }
     }
     
     private func configurationHomePage() {
+        
         view.backgroundColor = .systemBackground
         view.addSubview(scrollView)
-        
-        let locationCoord = UserDefaults.standard.array(forKey: "locationCoord") as! [Double]
-        if locationCoord.isEmpty {
-            contentView = [emptyPageView, searchPageViewView]
-        } else {
-            contentView = [tableView, searchPageViewView]
-        }
-       
+        contentView = [tableView, searchPageViewView]
         contentView.forEach { view in
             scrollView.addSubview(view)
         }
@@ -181,6 +186,10 @@ extension HomePageController: UIScrollViewDelegate, NSFetchedResultsControllerDe
         pageControler.currentPage = Int(pageNumber)
     }
     
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        tableView.reloadData()
+    }
+    
     func indexDelected(indexSelected: IndexPath) {
         coordinator?.indexPathSelect(indexS: indexSelected)
     }
@@ -203,7 +212,7 @@ extension HomePageController: UITableViewDelegate, UITableViewDataSource, DateSh
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 1
+            return fetchControllerDaily.sections?[0].numberOfObjects ?? 0
         case 1:
             return 1
         case 2:
@@ -217,27 +226,22 @@ extension HomePageController: UITableViewDelegate, UITableViewDataSource, DateSh
         switch indexPath.section {
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCell.shared, for: indexPath) as! HomeTableCell
-            if let current = currentWeather.first {
-                let daily = current.daily?.allObjects as! [Dayly]
-                if let dailyCurrent = daily.first {
-                    cell.setUp(homePageData: dailyCurrent)
-                }
+            let weatherCurrent = fetchControllerDaily.object(at: indexPath)
+            UserDefaults.standard.set(weatherCurrent.title, forKey: "cityName")
+            navigationItem.title = weatherCurrent.title
+            let weatherDaily = (weatherCurrent.daily?.allObjects as! [Dayly]).sorted(by: { $0.datetime! < $1.datetime! })
+            if let daily = weatherDaily.first {
+                 cell.setUp(homePageData: daily)
             }
             return cell
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: WeatherHourTableCell.identifier, for: indexPath) as! WeatherHourTableCell
-            if let currentHourly = currentWeatherHour.first {
-                let hourly = currentHourly.weatherHourly?.allObjects as! [Hourly]
-                cell.weatherHourly = hourly
-            }
+            
             cell.delegate = self
             return cell
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: WeatherDayTableCell.identifier, for: indexPath) as! WeatherDayTableCell
             cell.delegateShowDetailDay = self
-            if let daily = currentWeather.first {
-                cell.weatherDaily = daily.daily?.allObjects as! [Dayly]
-            }
             return cell
         default:
             return tableView.dequeueReusableCell(withIdentifier: "", for: indexPath) as UITableViewCell

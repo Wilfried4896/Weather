@@ -11,13 +11,17 @@ class WeatherHourTableCell: UITableViewCell, NSFetchedResultsControllerDelegate 
     static let identifier = "WeatherHourTableCell"
     weak var delegate: WeatherHourDelegate?
     
-    var weatherHourly: [Hourly] = [] {
-        didSet {
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
-        }
-    }
+    private var fetchController: NSFetchedResultsController<Hourly> = {
+        let request: NSFetchRequest<Hourly> = Hourly.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: "datetime", ascending: true)]
+        let fetchController = NSFetchedResultsController(
+            fetchRequest: request,
+            managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+        return fetchController
+    }()
     
     lazy var moreInfoHourLabel: UIButton = {
         let moreInfoHour = UIButton(type: .system)
@@ -41,6 +45,13 @@ class WeatherHourTableCell: UITableViewCell, NSFetchedResultsControllerDelegate 
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        do {
+            try fetchController.performFetch()
+            fetchController.delegate = self
+        } catch {
+            print("WeatherTableCell \(error.localizedDescription)")
+        }
         
         contentView.addSubview(collectionView)
         contentView.addSubview(moreInfoHourLabel)
@@ -73,15 +84,14 @@ class WeatherHourTableCell: UITableViewCell, NSFetchedResultsControllerDelegate 
 
 extension WeatherHourTableCell: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return weatherHourly.count
+        return fetchController.sections?[section].numberOfObjects ?? 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WeatherHoursCell.identifier, for: indexPath) as! WeatherHoursCell
         cell.layer.cornerRadius = 22
-        weatherHourly.forEach { hourly in
-            cell.setUp(hour: hourly)
-        }
+        let weatherHourly = fetchController.object(at: indexPath)
+        cell.setUp(hour: weatherHourly)
         return cell
     }
     

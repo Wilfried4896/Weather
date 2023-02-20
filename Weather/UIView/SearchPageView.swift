@@ -61,7 +61,6 @@ extension SearchPageView: UICollectionViewDataSource, UICollectionViewDelegateFl
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchViewCell.shared, for: indexPath) as! SearchViewCell
-        // cell.searchPageViewCell = weatherDay[indexPath.item].data
         let weatherDaily = fetchControllerDaily.object(at: indexPath)
         cell.setUp(with: weatherDaily)
         return cell
