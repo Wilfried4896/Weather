@@ -1,24 +1,19 @@
 
 import UIKit
 import SnapKit
-import CoreData
 
-class WeatherDayTableCell: UITableViewCell, NSFetchedResultsControllerDelegate {
+class WeatherDayTableCell: UITableViewCell {
     static let identifier = "WeatherDayTableCell"
     weak var delegateShowDetailDay: DateShowDelegate?
-   
-    private var fetchController: NSFetchedResultsController<Dayly> = {
-        let request: NSFetchRequest<Dayly> = Dayly.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: "datetime", ascending: true)]
-        let fetchController = NSFetchedResultsController(
-            fetchRequest: request,
-            managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext,
-            sectionNameKeyPath: nil,
-            cacheName: nil
-        )
-        return fetchController
-    }()
- 
+
+    var daily: [Daily] = [] {
+        didSet {
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
+    }
+    
     lazy var forecastLabel: UILabel = {
         let forecast = UILabel()
         forecast.text = "Ежедневный прогноз"
@@ -52,14 +47,6 @@ class WeatherDayTableCell: UITableViewCell, NSFetchedResultsControllerDelegate {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        do {
-            try fetchController.performFetch()
-            fetchController.delegate = self
-            
-        } catch {
-            print("WeatherTableCell \(error.localizedDescription)")
-        }
-        
         let stackView = UIStackView(arrangedSubviews: [forecastLabel, moreInfoDayLabel])
         stackView.horizontalDetail(nil)
         
@@ -80,29 +67,25 @@ class WeatherDayTableCell: UITableViewCell, NSFetchedResultsControllerDelegate {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        self.collectionView.reloadData()
-    }
 }
 
 extension WeatherDayTableCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return fetchController.sections?[section].numberOfObjects ?? 0
+        return daily.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WeatherDaysCell.identifier, for: indexPath) as! WeatherDaysCell
         cell.backgroundColor = UIColor(red: 233/255, green: 238/255, blue: 250/255, alpha: 1)
         cell.layer.cornerRadius = 10
-        let weatherDaily = fetchController.object(at: indexPath)
-        cell.setUpCell(day: weatherDaily)
+        
+        cell.setUpCell(day: daily[indexPath.item])
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        delegateShowDetailDay?.indexDelected(indexSelected: indexPath)
+        delegateShowDetailDay?.indexSelected(indexSelected: indexPath)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

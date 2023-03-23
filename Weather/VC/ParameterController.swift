@@ -95,7 +95,8 @@ class ParameterController: UIViewController {
 
     private func configurationParamatrPage() {
         view.backgroundColor = UIColor(red: 32/255, green: 78/255, blue: 199/255, alpha: 1)
-        navigationItem.leftBarButtonItem = UIBarButtonItem.menuButton(self, action: #selector(actionButton), imageName: nil, titleName: "Return to Weather", color: .white)
+        
+        navigationController?.navigationBar.tintColor = .white
         
         let stackWeather = UIStackView(arrangedSubviews: [weatherLabel, weatherSwitch])
         stackWeather.distribution = .equalSpacing
@@ -158,10 +159,6 @@ class ParameterController: UIViewController {
             make.top.equalTo(view).inset(37)
             make.leading.equalTo(view).offset(2)
         }
-    }
-    
-    @objc private func actionButton() {
-        navigationController?.popViewController(animated: true)
     }
     
     @objc private func didTapTimeFormat() {

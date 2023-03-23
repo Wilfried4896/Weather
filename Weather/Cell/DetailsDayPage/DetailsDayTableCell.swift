@@ -226,7 +226,7 @@ class DetailsDayTableCell: UITableViewCell {
         }
     }
     
-    func setUpLow(dataDayLow: Dayly) {
+    func setUpLow(dataDayLow: Daily) {
         titleLabel.text = "День"
         feelingValueLabel.text = dataDayLow.max_temp.concervCelcusFahrenheit
         tempIcon.image = UIImage(named: dataDayLow.icon ?? "")
@@ -240,7 +240,7 @@ class DetailsDayTableCell: UITableViewCell {
         precipetationValueLabel.text = "\(dataDayLow.clouds)%"
     }
     
-    func setUpNight(dataDayNigth: Dayly) {
+    func setUpNight(dataDayNigth: Daily) {
         titleLabel.text = "Ночь"
         feelingValueLabel.text = dataDayNigth.app_min_temp.concervCelcusFahrenheit
         tempIcon.image = UIImage(named: dataDayNigth.icon ?? "")

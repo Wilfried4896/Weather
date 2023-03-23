@@ -1,13 +1,6 @@
-//
-//  DetailByHourMoreInfoTableCell.swift
-//  Weather
-//
-//  Created by Вилфриэд Оди on 04.12.2022.
-//
 
 import UIKit
 import SnapKit
-import CoreData
 
 class DetailByHourMoreInfoTableCell: UITableViewCell {
     static let shared = "DetailByHourMoreInfoTableCell"

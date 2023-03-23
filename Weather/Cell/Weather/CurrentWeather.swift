@@ -2,8 +2,8 @@
 import UIKit
 import SnapKit
 
-class HomeTableCell: UITableViewCell {
-    static let shared = "HomeTableCell"
+class CurrentWeatherCell: UITableViewCell {
+    static let shared = "CurrentWeatherCell"
     
     lazy var ellipseIcon: UIImageView = {
         let ellipse = UIImageView()
@@ -186,16 +186,16 @@ class HomeTableCell: UITableViewCell {
         }
     }
     
-    func setUp(homePageData: Dayly) {
-        weatherTempLabel.text = homePageData.min_temp.concervCelcusFahrenheit + "/" + homePageData.max_temp.concervCelcusFahrenheit
-        weatherPrincipeLabel.text = homePageData.temp.concervCelcusFahrenheit
-        sunriseLabel.text = "\(Double(homePageData.sunrise_ts).toDate)"
-        sunsetLabel.text = "\(Double(homePageData.sunset_ts).toDate)"
-        windLabel.text = homePageData.wind_spd.conversMileKilometr
-        precipitationLabel.text = "\(Int(homePageData.pop.rounded()))%"
-        dateTimeLabel.text = "\(Date().dateShort),  \(homePageData.datetime!.toFullDateHome)"
-        descriptionLabel.text = homePageData.descriptionIcon
-        numberNolabel.text = "\(Int(homePageData.max_dhi.rounded()))"
+    func setUp(currentData: Daily) {
+        weatherTempLabel.text = currentData.min_temp.concervCelcusFahrenheit + "/" + currentData.max_temp.concervCelcusFahrenheit
+        weatherPrincipeLabel.text = currentData.temp.concervCelcusFahrenheit
+        sunriseLabel.text = "\(Double(currentData.sunrise_ts).toDate)"
+        sunsetLabel.text = "\(Double(currentData.sunset_ts).toDate)"
+        windLabel.text = currentData.wind_spd.conversMileKilometr
+        precipitationLabel.text = "\(Int(currentData.pop.rounded()))%"
+        dateTimeLabel.text = "\(Date().dateShort),  \(currentData.datetime!.toFullDateHome)"
+        descriptionLabel.text = currentData.descriptionIcon
+        numberNolabel.text = "\(Int(currentData.max_dhi.rounded()))"
     }
 }
 

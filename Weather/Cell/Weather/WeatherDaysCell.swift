@@ -95,7 +95,7 @@ class WeatherDaysCell: UICollectionViewCell {
         }
     }
     
-    func setUpCell(day: Dayly) {
+    func setUpCell(day: Daily) {
         dayLabel.text = day.datetime?.toDate
         imageIcon.image = UIImage(named: day.icon ?? "")
         humidityLabel.text = "\(Int(day.rh))%"

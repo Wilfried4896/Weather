@@ -2,22 +2,19 @@
 import UIKit
 import SnapKit
 import SwiftUI
-import CoreData
 
 class DetailHoursForecastController: UIViewController {
     weak var coordinator: HomePageCoordinator?
     
-    private var fetchController: NSFetchedResultsController<Hourly> = {
-        let request: NSFetchRequest<Hourly> = Hourly.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: "datetime", ascending: true)]
-        let fetchController = NSFetchedResultsController(
-            fetchRequest: request,
-            managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext,
-            sectionNameKeyPath: nil,
-            cacheName: nil
-        )
-        return fetchController
-    }()
+    var hourly: [Hourly] = [] {
+        didSet {
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+    var cityName: String = ""
     
     lazy var cityLabel: UILabel = {
         let city = UILabel()
@@ -41,13 +38,6 @@ class DetailHoursForecastController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        do {
-            try fetchController.performFetch()
-            fetchController.delegate = self
-        } catch {
-            print("WeatherTableCell \(error.localizedDescription)")
-        }
-        
         configurationDetailHoursForecast()
     }
     
@@ -61,7 +51,7 @@ class DetailHoursForecastController: UIViewController {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem.menuButton(self, action: #selector(actionButton), imageName: "Arrow 2", titleName: "\tПрогноз на 24 часа", color: .black)
         
-        let controller = UIHostingController(rootView: Contients(weatherHourly: fetchController.fetchedObjects ?? []))
+        let controller = UIHostingController(rootView: Contients(weatherHourly: hourly))
         guard let charts = controller.view else { return }
         charts.backgroundColor = UIColor(red: 233/255, green: 238/255, blue: 250/255, alpha: 1)
         
@@ -85,6 +75,8 @@ class DetailHoursForecastController: UIViewController {
             make.leading.trailing.equalTo(view)
             make.bottom.equalTo(view)
         }
+        
+        cityLabel.text = cityName
     }
  
     @objc private func actionButton() {
@@ -92,21 +84,15 @@ class DetailHoursForecastController: UIViewController {
     }
 }
 
-extension DetailHoursForecastController: UITableViewDelegate, UITableViewDataSource, NSFetchedResultsControllerDelegate {
+extension DetailHoursForecastController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return fetchController.sections?[section].numberOfObjects ?? 0
+        return hourly.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: DetailByHourMoreInfoTableCell.shared, for: indexPath) as! DetailByHourMoreInfoTableCell
-        let weatherHourly = fetchController.object(at: indexPath)
-        cell.setUp(hourDescprition: weatherHourly)
+        cell.setUp(hourDescprition: hourly[indexPath.row])
         return cell
-    }
-    
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        self.tableView.reloadData()
     }
 }
 

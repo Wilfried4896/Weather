@@ -11,10 +11,13 @@
 		EC6C06F62991180F005D3B33 /* SearchViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6C06F52991180F005D3B33 /* SearchViewCell.swift */; };
 		EC6D4FE0293F42EF009B933E /* DateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6D4FDF293F42EF009B933E /* DateCell.swift */; };
 		EC6D4FE2293F4571009B933E /* DateShowTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6D4FE1293F4571009B933E /* DateShowTableCell.swift */; };
-		EC6D4FE4293FC95B009B933E /* HomePageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6D4FE3293FC95B009B933E /* HomePageController.swift */; };
-		EC6D4FE6293FDA1C009B933E /* HomeTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6D4FE5293FDA1C009B933E /* HomeTableCell.swift */; };
+		EC6D4FE4293FC95B009B933E /* WeatherController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6D4FE3293FC95B009B933E /* WeatherController.swift */; };
+		EC6D4FE6293FDA1C009B933E /* CurrentWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6D4FE5293FDA1C009B933E /* CurrentWeather.swift */; };
 		EC6E65A4293D2851004B450E /* DoubleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6E65A3293D2851004B450E /* DoubleExtension.swift */; };
 		EC6E65A6293D5455004B450E /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6E65A5293D5455004B450E /* DateExtension.swift */; };
+		EC70687929CA1F6F0049D26A /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC70687829CA1F6F0049D26A /* PageViewController.swift */; };
+		EC70687B29CAFE090049D26A /* Extension+UIviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC70687A29CAFE090049D26A /* Extension+UIviewController.swift */; };
+		EC70687F29CBB8120049D26A /* OnboarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC70687E29CBB8120049D26A /* OnboarViewModel.swift */; };
 		EC707E1A293DF36600E4B9E0 /* DetailsDayTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC707E19293DF36600E4B9E0 /* DetailsDayTableCell.swift */; };
 		EC70E1672940F37200832A95 /* SunMoonTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC70E1662940F37200832A95 /* SunMoonTableCell.swift */; };
 		EC70E169294125AB00832A95 /* AirQualityTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC70E168294125AB00832A95 /* AirQualityTableCell.swift */; };
@@ -26,7 +29,6 @@
 		EC74F9222937AFD30010CDFF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EC74F9212937AFD30010CDFF /* Assets.xcassets */; };
 		EC74F9252937AFD30010CDFF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC74F9232937AFD30010CDFF /* LaunchScreen.storyboard */; };
 		EC74F92E2937AFF90010CDFF /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = EC74F92D2937AFF90010CDFF /* SnapKit */; };
-		EC74F9312937B00C0010CDFF /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = EC74F9302937B00C0010CDFF /* Alamofire */; };
 		EC74F9342937B0990010CDFF /* LabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC74F9332937B0990010CDFF /* LabelExtension.swift */; };
 		EC74F9372937B0DD0010CDFF /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC74F9362937B0DD0010CDFF /* Coordinator.swift */; };
 		EC74F9392937B11E0010CDFF /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC74F9382937B11E0010CDFF /* AppCoordinator.swift */; };
@@ -57,10 +59,13 @@
 		EC6C06F52991180F005D3B33 /* SearchViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewCell.swift; sourceTree = "<group>"; };
 		EC6D4FDF293F42EF009B933E /* DateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateCell.swift; sourceTree = "<group>"; };
 		EC6D4FE1293F4571009B933E /* DateShowTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateShowTableCell.swift; sourceTree = "<group>"; };
-		EC6D4FE3293FC95B009B933E /* HomePageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageController.swift; sourceTree = "<group>"; };
-		EC6D4FE5293FDA1C009B933E /* HomeTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTableCell.swift; sourceTree = "<group>"; };
+		EC6D4FE3293FC95B009B933E /* WeatherController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherController.swift; sourceTree = "<group>"; };
+		EC6D4FE5293FDA1C009B933E /* CurrentWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeather.swift; sourceTree = "<group>"; };
 		EC6E65A3293D2851004B450E /* DoubleExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleExtension.swift; sourceTree = "<group>"; };
 		EC6E65A5293D5455004B450E /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
+		EC70687829CA1F6F0049D26A /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
+		EC70687A29CAFE090049D26A /* Extension+UIviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+UIviewController.swift"; sourceTree = "<group>"; };
+		EC70687E29CBB8120049D26A /* OnboarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboarViewModel.swift; sourceTree = "<group>"; };
 		EC707E19293DF36600E4B9E0 /* DetailsDayTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsDayTableCell.swift; sourceTree = "<group>"; };
 		EC70E1662940F37200832A95 /* SunMoonTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunMoonTableCell.swift; sourceTree = "<group>"; };
 		EC70E168294125AB00832A95 /* AirQualityTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirQualityTableCell.swift; sourceTree = "<group>"; };
@@ -104,7 +109,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC74F92E2937AFF90010CDFF /* SnapKit in Frameworks */,
-				EC74F9312937B00C0010CDFF /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,6 +185,7 @@
 				EC6E65A3293D2851004B450E /* DoubleExtension.swift */,
 				EC6E65A5293D5455004B450E /* DateExtension.swift */,
 				EC71210C298BEF1A00C446E5 /* UIBarButtonItem.swift */,
+				EC70687A29CAFE090049D26A /* Extension+UIviewController.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -200,10 +205,11 @@
 			isa = PBXGroup;
 			children = (
 				EC74F93D2937B1880010CDFF /* OnboardingController.swift */,
-				EC6D4FE3293FC95B009B933E /* HomePageController.swift */,
+				EC6D4FE3293FC95B009B933E /* WeatherController.swift */,
 				EC7916D1293BF1360050CAD9 /* DetailHoursForecastController.swift */,
 				EC7916D3293BF15E0050CAD9 /* DetailDayForecastController.swift */,
 				EC7916D5293BF1770050CAD9 /* ParameterController.swift */,
+				EC70687829CA1F6F0049D26A /* PageViewController.swift */,
 			);
 			path = VC;
 			sourceTree = "<group>";
@@ -215,6 +221,7 @@
 				EC74F9422937B2D30010CDFF /* WeatherManager.swift */,
 				EC76E7E4294F321B00BB0A02 /* LocationManager.swift */,
 				ECA00EFF2969A25D0043FEFA /* WeatherViewModel.swift */,
+				EC70687E29CBB8120049D26A /* OnboarViewModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -225,7 +232,7 @@
 				EC6C06F729912588005D3B33 /* SearchPage */,
 				EC6E65A2293D0123004B450E /* DetailsDayPage */,
 				EC7916D8293CAC4F0050CAD9 /* DetailsHourPage */,
-				EC7916D7293CAC380050CAD9 /* HomePage */,
+				EC7916D7293CAC380050CAD9 /* Weather */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -251,16 +258,16 @@
 			path = App;
 			sourceTree = "<group>";
 		};
-		EC7916D7293CAC380050CAD9 /* HomePage */ = {
+		EC7916D7293CAC380050CAD9 /* Weather */ = {
 			isa = PBXGroup;
 			children = (
 				EC74F94B2937F0030010CDFF /* WeatherDaysCell.swift */,
 				EC74F9492937E43B0010CDFF /* WeatherHoursCell.swift */,
 				EC7C54F5293AA18E00E57387 /* WeatherHourTableCell.swift */,
 				EC7C54F7293ABF6C00E57387 /* WeatherDayTableCell.swift */,
-				EC6D4FE5293FDA1C009B933E /* HomeTableCell.swift */,
+				EC6D4FE5293FDA1C009B933E /* CurrentWeather.swift */,
 			);
-			path = HomePage;
+			path = Weather;
 			sourceTree = "<group>";
 		};
 		EC7916D8293CAC4F0050CAD9 /* DetailsHourPage */ = {
@@ -290,7 +297,6 @@
 			name = Weather;
 			packageProductDependencies = (
 				EC74F92D2937AFF90010CDFF /* SnapKit */,
-				EC74F9302937B00C0010CDFF /* Alamofire */,
 			);
 			productName = Weather;
 			productReference = EC74F9152937AFD10010CDFF /* Weather.app */;
@@ -322,7 +328,6 @@
 			mainGroup = EC74F90C2937AFD10010CDFF;
 			packageReferences = (
 				EC74F92C2937AFF90010CDFF /* XCRemoteSwiftPackageReference "SnapKit" */,
-				EC74F92F2937B00C0010CDFF /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = EC74F9162937AFD10010CDFF /* Products */;
 			projectDirPath = "";
@@ -359,17 +364,19 @@
 				EC74F94A2937E43B0010CDFF /* WeatherHoursCell.swift in Sources */,
 				EC74F93B2937B14B0010CDFF /* OnboardingCoordinator.swift in Sources */,
 				EC7916D6293BF1770050CAD9 /* ParameterController.swift in Sources */,
+				EC70687B29CAFE090049D26A /* Extension+UIviewController.swift in Sources */,
 				ECA00F002969A25D0043FEFA /* WeatherViewModel.swift in Sources */,
 				EC7C54ED2939F9FB00E57387 /* StringExtension.swift in Sources */,
 				EC74F9342937B0990010CDFF /* LabelExtension.swift in Sources */,
 				EC71215F298C48A000C446E5 /* CoreDataManger.swift in Sources */,
-				EC6D4FE6293FDA1C009B933E /* HomeTableCell.swift in Sources */,
+				EC6D4FE6293FDA1C009B933E /* CurrentWeather.swift in Sources */,
 				EC707E1A293DF36600E4B9E0 /* DetailsDayTableCell.swift in Sources */,
 				EC74F93E2937B1880010CDFF /* OnboardingController.swift in Sources */,
 				EC7C54F6293AA18E00E57387 /* WeatherHourTableCell.swift in Sources */,
 				EC6C06F62991180F005D3B33 /* SearchViewCell.swift in Sources */,
 				EC74F9392937B11E0010CDFF /* AppCoordinator.swift in Sources */,
 				EC71210D298BEF1A00C446E5 /* UIBarButtonItem.swift in Sources */,
+				EC70687F29CBB8120049D26A /* OnboarViewModel.swift in Sources */,
 				EC7916DE293CAF6B0050CAD9 /* DetailByHourMoreInfoTableCell.swift in Sources */,
 				EC74F94C2937F0030010CDFF /* WeatherDaysCell.swift in Sources */,
 				EC71215C298C482400C446E5 /* CoreDataWeather.xcdatamodeld in Sources */,
@@ -381,11 +388,12 @@
 				EC74F9432937B2D30010CDFF /* WeatherManager.swift in Sources */,
 				EC7916D4293BF15E0050CAD9 /* DetailDayForecastController.swift in Sources */,
 				EC70E1672940F37200832A95 /* SunMoonTableCell.swift in Sources */,
+				EC70687929CA1F6F0049D26A /* PageViewController.swift in Sources */,
 				EC6D4FE0293F42EF009B933E /* DateCell.swift in Sources */,
 				EC6D4FE2293F4571009B933E /* DateShowTableCell.swift in Sources */,
 				EC74F9412937B29B0010CDFF /* ModelWeather.swift in Sources */,
 				EC74F91B2937AFD10010CDFF /* SceneDelegate.swift in Sources */,
-				EC6D4FE4293FC95B009B933E /* HomePageController.swift in Sources */,
+				EC6D4FE4293FC95B009B933E /* WeatherController.swift in Sources */,
 				EC7916E0293CBB210050CAD9 /* StackViewEtension.swift in Sources */,
 				EC7916DA293CAE970050CAD9 /* DetailsSwiftUI.swift in Sources */,
 				EC6C06F4299101AF005D3B33 /* SearchPageViewCell.swift in Sources */,
@@ -615,14 +623,6 @@
 				minimumVersion = 5.0.0;
 			};
 		};
-		EC74F92F2937B00C0010CDFF /* XCRemoteSwiftPackageReference "Alamofire" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -630,11 +630,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EC74F92C2937AFF90010CDFF /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
-		};
-		EC74F9302937B00C0010CDFF /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EC74F92F2937B00C0010CDFF /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 

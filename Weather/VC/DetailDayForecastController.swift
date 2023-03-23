@@ -1,11 +1,9 @@
 
 import UIKit
 import SnapKit
-import CoreData
 
 class DetailDayForecastController: UIViewController {
     weak var coordinator: HomePageCoordinator?
-    weak var delegateFromHome: HomePageDelegate?
     
     var indexSelect: IndexPath = [] {
         didSet {
@@ -15,18 +13,13 @@ class DetailDayForecastController: UIViewController {
         }
     }
     
-    let fetchControllerDaily: NSFetchedResultsController<Dayly> = {
-        let fetchResquest = NSFetchRequest<Dayly>(entityName: "Dayly")
-        fetchResquest.sortDescriptors = [NSSortDescriptor(key: "datetime", ascending: true)]
-        
-        let frc = NSFetchedResultsController(
-            fetchRequest: fetchResquest,
-            managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext,
-            sectionNameKeyPath: nil,
-            cacheName: nil)
-        
-        return frc
-    }()
+    var daily: [Daily] = [] {
+        didSet {
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+    }
     
     lazy var tableView: UITableView = {
         let tableview = UITableView(frame: .zero, style: .grouped)
@@ -52,12 +45,6 @@ class DetailDayForecastController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        do {
-            try fetchControllerDaily.performFetch()
-            fetchControllerDaily.delegate = self
-        } catch {
-            
-        }
         
         configurationDetailDayForecast()
     }
@@ -69,7 +56,6 @@ class DetailDayForecastController: UIViewController {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem.menuButton(self, action: #selector(actionButton), imageName: "Arrow 2", titleName: "\tДневная погода", color: .black)
       
-        cityLabel.text = UserDefaults.standard.string(forKey: "cityName")
         cityLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(15)
             make.leading.equalTo(view).inset(20)
@@ -89,15 +75,12 @@ class DetailDayForecastController: UIViewController {
     
 }
 
-extension DetailDayForecastController: UITableViewDelegate, UITableViewDataSource, DateShowDelegate, NSFetchedResultsControllerDelegate {
-    func indexDelected(indexSelected: IndexPath) {
+extension DetailDayForecastController: UITableViewDelegate, UITableViewDataSource, DateShowDelegate {
+    
+    func indexSelected(indexSelected: IndexPath) {
         indexSelect = indexSelected
     }
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        tableView.reloadData()
-    }
-    
+
     func numberOfSections(in tableView: UITableView) -> Int {
         return 5
     }
@@ -119,25 +102,24 @@ extension DetailDayForecastController: UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let daily = fetchControllerDaily.object(at: indexSelect)
         
         switch indexPath.section {
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: DateShowTableCell.shared, for: indexPath) as! DateShowTableCell
-            cell.dataWeatherDay = fetchControllerDaily.fetchedObjects ?? []
+            cell.dailyDate = daily
             cell.delegateShowDetailDay = self
             return cell
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: DetailsDayTableCell.shared, for: indexPath) as! DetailsDayTableCell
-            cell.setUpLow(dataDayLow: daily)
+            cell.setUpLow(dataDayLow: daily[indexSelect.row])
             return cell
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: DetailsDayTableCell.shared, for: indexPath) as! DetailsDayTableCell
-            cell.setUpNight(dataDayNigth: daily)
+            cell.setUpNight(dataDayNigth: daily[indexSelect.row])
             return cell
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: SunMoonTableCell.shared, for: indexPath) as! SunMoonTableCell
-            cell.setUp(sunMoonData: daily)
+            cell.setUp(sunMoonData: daily[indexSelect.row])
             return cell
         case 4:
             let cell = tableView.dequeueReusableCell(withIdentifier: AirQualityTableCell.shared, for: indexPath) as! AirQualityTableCell

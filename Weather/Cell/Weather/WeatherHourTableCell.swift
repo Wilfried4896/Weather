@@ -4,24 +4,20 @@ import SnapKit
 import CoreData
 
 protocol WeatherHourDelegate: AnyObject {
-    func didTapInfo()
+    func showHourlyPage()
 }
 
-class WeatherHourTableCell: UITableViewCell, NSFetchedResultsControllerDelegate {
+class WeatherHourTableCell: UITableViewCell {
     static let identifier = "WeatherHourTableCell"
     weak var delegate: WeatherHourDelegate?
     
-    private var fetchController: NSFetchedResultsController<Hourly> = {
-        let request: NSFetchRequest<Hourly> = Hourly.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: "datetime", ascending: true)]
-        let fetchController = NSFetchedResultsController(
-            fetchRequest: request,
-            managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext,
-            sectionNameKeyPath: nil,
-            cacheName: nil
-        )
-        return fetchController
-    }()
+    var hourly: [Hourly] = [] {
+        didSet {
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
+    }
     
     lazy var moreInfoHourLabel: UIButton = {
         let moreInfoHour = UIButton(type: .system)
@@ -46,13 +42,6 @@ class WeatherHourTableCell: UITableViewCell, NSFetchedResultsControllerDelegate 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        do {
-            try fetchController.performFetch()
-            fetchController.delegate = self
-        } catch {
-            print("WeatherTableCell \(error.localizedDescription)")
-        }
-        
         contentView.addSubview(collectionView)
         contentView.addSubview(moreInfoHourLabel)
 
@@ -72,26 +61,21 @@ class WeatherHourTableCell: UITableViewCell, NSFetchedResultsControllerDelegate 
         fatalError("init(coder:) has not been implemented")
     }
     
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        self.collectionView.reloadData()
-    }
-    
     @objc func didTapMoreInfo() {
-        delegate?.didTapInfo()
+        delegate?.showHourlyPage()
     }
     
 }
 
 extension WeatherHourTableCell: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return fetchController.sections?[section].numberOfObjects ?? 1
+        return hourly.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WeatherHoursCell.identifier, for: indexPath) as! WeatherHoursCell
         cell.layer.cornerRadius = 22
-        let weatherHourly = fetchController.object(at: indexPath)
-        cell.setUp(hour: weatherHourly)
+        cell.setUp(hour: hourly[indexPath.row])
         return cell
     }
     

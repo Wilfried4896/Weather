@@ -1,19 +1,54 @@
 
 import Foundation
+import Combine
 
 class WeatherViewModel {
+
+    var address: String
+    var cancelled = Set<AnyCancellable>()
     
-    func getWeatherData(_ latitude: Double, _ longitude: Double) {
-        WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/hourly?lat=\(latitude)&lon=\(longitude)&hours=24",
-                                         decodable: WeatherHours.self) { result in
+    init(address: String) {
+        self.address = address
+        getWeather()
+    }
+    
+    private func getWeather() {
+        LocationManager.shared.getCoordinate(addressString: address) { [self] location in
+            let weatherManager = WeatherManager(
+                longitude: location.coordinate.longitude,
+                latitude: location.coordinate.latitude
+            )
             
-            CoreDataManager.shared.saveDataCityWeatherHourly(from: result)
+            weatherManager.$stateHourly
+                .sink { state in
+                    switch state {
+                    case .loading:
+                        print("loading")
+                    case .success(weatherHourly: let weatherHourly):
+                        CoreDataManager.shared.saveDataCityWeatherHourly(from: weatherHourly)
+                    case .failed(error: let error):
+                        print(error)
+                    case .none:
+                        break
+                    }
+                }
+                .store(in: &cancelled)
             
-        }
-       
-        WeatherManager.shared.getWeather(urlString: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/daily?lat=\(latitude)&lon=\(longitude)",
-                                         decodable: WeatherDays.self) { result in
-            CoreDataManager.shared.saveDataCityWeatherDayly(weatherCityDaily: result)
+            weatherManager.$stateDaily
+                .sink { state in
+                    switch state {
+                    case .loading:
+                        print("loading")
+                    case .success(weatherDaily: let weatherDaily):
+                        CoreDataManager.shared.saveDataCityWeatherDaily(weatherDaily: weatherDaily)
+                    case .failed(error: let error):
+                        print(error)
+                    case .none:
+                        break
+                    }
+                }
+                .store(in: &cancelled)
         }
     }
+
 }

@@ -84,15 +84,15 @@ class SearchViewCell: UICollectionViewCell {
         }
     }
     
-    func setUp(with weatherDays: WeatherCityDaily) {
-        cityLabel.text = weatherDays.title
-        let daily = (weatherDays.daily!.allObjects as! [Dayly]).sorted(by: { $0.datetime! < $1.datetime! })
-        if let weather = daily.first {
-            imageWeather.image = UIImage(named: weather.icon ?? "")
-            labelWeather.text = weather.temp.concervCelcusFahrenheit
-            descriptionLabel.text = weather.descriptionIcon
-        }
-    }
+//    func setUp(with weatherDays: WeatherCityDaily) {
+//        cityLabel.text = weatherDays.title
+//        let daily = (weatherDays.daily!.allObjects as! [Dayly]).sorted(by: { $0.datetime! < $1.datetime! })
+//        if let weather = daily.first {
+//            imageWeather.image = UIImage(named: weather.icon ?? "")
+//            labelWeather.text = weather.temp.concervCelcusFahrenheit
+//            descriptionLabel.text = weather.descriptionIcon
+//        }
+//    }
 }
 
 

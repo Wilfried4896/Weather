@@ -2,11 +2,7 @@
 import UIKit
 import CoreLocation
 
-protocol HomePageDelegate: AnyObject {
-    func indexPathSelect(indexS: IndexPath)
-}
-
-class HomePageCoordinator: Coordinator, HomePageDelegate {
+class HomePageCoordinator: Coordinator {
 
     weak var parent: AppCoordinator?
     var childrenCoordinators: [Coordinator] = []
@@ -23,29 +19,14 @@ class HomePageCoordinator: Coordinator, HomePageDelegate {
     }
     
     func homePageVC() {
-        let vc = HomePageController()
-        //print(coreLocation)
+        let vc = PageViewController()
         vc.coordinator = self
-        //vc.locationCordinates = coreLocation
         navigation.pushViewController(vc, animated: true)
     }
     
     func paramatrPage() {
         let vc = ParameterController()
         vc.coordinator = self
-        navigation.pushViewController(vc, animated: true)
-    }
-    
-    func detailDay() {
-        let vc = DetailHoursForecastController()
-        vc.coordinator = self
-        navigation.pushViewController(vc, animated: true)
-    }
-    
-    func indexPathSelect(indexS: IndexPath) {
-        let vc = DetailDayForecastController()
-        vc.coordinator = self
-        vc.indexSelect = indexS
         navigation.pushViewController(vc, animated: true)
     }
 }

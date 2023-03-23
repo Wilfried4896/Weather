@@ -1,7 +1,6 @@
 
 import UIKit
 import SnapKit
-import CoreData
 
 class SearchPageView: UIView {
 
@@ -16,30 +15,10 @@ class SearchPageView: UIView {
         return collection
     }()
     
-    let fetchControllerDaily: NSFetchedResultsController<WeatherCityDaily> = {
-        let fetchResquest = NSFetchRequest<WeatherCityDaily>(entityName: "WeatherCityDaily")
-        fetchResquest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
-        
-        let frc = NSFetchedResultsController(
-            fetchRequest: fetchResquest,
-            managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext,
-            sectionNameKeyPath: nil,
-            cacheName: nil)
-        
-        return frc
-    }()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
 
         addSubview(collectionView)
-        
-        do {
-            try fetchControllerDaily.performFetch()
-            fetchControllerDaily.delegate = self
-        } catch {
-            print("\(error.localizedDescription)")
-        }
 
         collectionView.snp.makeConstraints { make in
             make.top.equalToSuperview()
@@ -55,14 +34,14 @@ class SearchPageView: UIView {
 }
 extension SearchPageView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return fetchControllerDaily.sections?[section].numberOfObjects ?? 0
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchViewCell.shared, for: indexPath) as! SearchViewCell
-        let weatherDaily = fetchControllerDaily.object(at: indexPath)
-        cell.setUp(with: weatherDaily)
+        //let weatherDaily =
+       // cell.setUp(with: weatherDaily)
         return cell
     }
     
@@ -71,8 +50,3 @@ extension SearchPageView: UICollectionViewDataSource, UICollectionViewDelegateFl
     }
 }
 
-extension SearchPageView: NSFetchedResultsControllerDelegate {
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        self.collectionView.reloadData()
-    }
-}

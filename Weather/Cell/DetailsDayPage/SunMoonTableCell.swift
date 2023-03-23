@@ -174,7 +174,7 @@ class SunMoonTableCell: UITableViewCell {
         }
     }
     
-    func setUp(sunMoonData: Dayly) {
+    func setUp(sunMoonData: Daily) {
         let differenceTimeSun = Double(sunMoonData.sunset_ts - sunMoonData.sunrise_ts)
         let differenceTimeMoon = Double(sunMoonData.moonset_ts - sunMoonData.moonrise_ts)
 

@@ -5,10 +5,10 @@ import CoreLocation
 
 class OnboardingController: UIViewController {
     weak var coordinator: OnboardingCoordinator?
-    private let notificationCenter = NotificationCenter.default
+
     let type = CLLocationManager()
-    private let viewModel = WeatherViewModel()
-    var locationCoord: [Double] = []
+    private var viewModel: OnboarViewModel!
+   
     
     lazy var imageView: UIImageView = {
         let image = UIImageView()
@@ -110,6 +110,7 @@ class OnboardingController: UIViewController {
     }
     
     @objc func didTapLocalization() {
+        UserDefaults.standard.set(true, forKey: "isConnected")
         LocationManager.shared.getUserLocation {[weak self] location in
             guard let strongeSelf = self else { return }
             DispatchQueue.main.async {
@@ -117,22 +118,18 @@ class OnboardingController: UIViewController {
                 case .restricted, .denied, .notDetermined: break
                    
                 case .authorizedAlways, .authorizedWhenInUse:
-                    self?.locationCoord = [location.coordinate.latitude, location.coordinate.longitude]
-                    strongeSelf.viewModel.getWeatherData(location.coordinate.latitude, location.coordinate.longitude)
-                    UserDefaults.standard.set(self?.locationCoord, forKey: "locationCoord")
-                    
+                    strongeSelf.viewModel = OnboarViewModel(longitude: location.coordinate.longitude,
+                                                            latitude: location.coordinate.latitude)
                 @unknown default:
                     fatalError()
                 }
             }
-            UserDefaults.standard.set(true, forKey: "isConnected")
             strongeSelf.coordinator?.parent?.homeCoordinator()
         }
     }
     
    
     @objc func didTapDontUserLocalization() {
-        UserDefaults.standard.set(locationCoord, forKey: "locationCoord")
         UserDefaults.standard.set(true, forKey: "isConnected")
         coordinator?.parent?.homeCoordinator()
     }

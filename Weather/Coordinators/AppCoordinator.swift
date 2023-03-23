@@ -9,6 +9,7 @@ class AppCoordinator: Coordinator {
     
     init(window: UIWindow?) {
         self.window = window
+        window?.backgroundColor = .systemBackground
     }
     
     func start() {

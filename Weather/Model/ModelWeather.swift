@@ -8,6 +8,11 @@ import Foundation
   "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/3hourly?lat=35.5&lon=-78.5&lang=ru"
  */
 
+struct Weather {
+    var hourly: WeatherHourly
+    var daily: WeatherDaily
+}
+
 struct WeatherHours: Codable {
     var city_name: String
     var hourly: [DataHours]

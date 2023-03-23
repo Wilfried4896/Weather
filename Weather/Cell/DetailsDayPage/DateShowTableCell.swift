@@ -3,7 +3,7 @@ import UIKit
 import SnapKit
 
 protocol DateShowDelegate: AnyObject {
-    func indexDelected(indexSelected: IndexPath)
+    func indexSelected(indexSelected: IndexPath)
 }
 
 class DateShowTableCell: UITableViewCell {
@@ -12,7 +12,7 @@ class DateShowTableCell: UITableViewCell {
     var currentSelected: IndexPath?
     weak var delegateShowDetailDay: DateShowDelegate?
     
-    var dataWeatherDay: [Dayly] = []
+    var dailyDate: [Daily] = []
     
     lazy var collectionView: UICollectionView = {
         let viewLayout = UICollectionViewFlowLayout()
@@ -45,7 +45,7 @@ class DateShowTableCell: UITableViewCell {
 extension DateShowTableCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout  {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataWeatherDay.count
+        return dailyDate.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -55,14 +55,14 @@ extension DateShowTableCell: UICollectionViewDataSource, UICollectionViewDelegat
         cell.dateLabel.textColor = currentSelected?.item == indexPath.item ? .white : .black
         cell.layer.cornerRadius = 10
         
-        cell.setUp(date: dataWeatherDay[indexPath.item])
+        cell.setUp(date: dailyDate[indexPath.item])
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         currentSelected = indexPath
         if let currentSelected {
-            delegateShowDetailDay?.indexDelected(indexSelected: currentSelected)
+            delegateShowDetailDay?.indexSelected(indexSelected: currentSelected)
         }
         collectionView.reloadData()
     }

@@ -17,9 +17,9 @@ class CoreDataManager {
     }()
     
     private let fetchResquestHour = NSFetchRequest<Hourly>(entityName: "Hourly")
-    private let fetchResquestDay = NSFetchRequest<Dayly>(entityName: "Dayly")
-    private let fetchResquestWeatherCity = NSFetchRequest<WeatherCityHourly>(entityName: "WeatherCityHourly")
-    private let fetchRequestWeatherDaily = NSFetchRequest<WeatherCityDaily>(entityName: "WeatherCityDaily")
+    private let fetchResquestDay = NSFetchRequest<Daily>(entityName: "Daily")
+    private let fetchResquesWeatherHourly = NSFetchRequest<WeatherHourly>(entityName: "WeatherHourly")
+    private let fetchResquestWeatherDaily = NSFetchRequest<WeatherDaily>(entityName: "WeatherDaily")
     
     
     // MARK: - Core Data Saving support
@@ -35,39 +35,38 @@ class CoreDataManager {
         }
     }
     
-    func saveDataCityWeatherHourly(from weatherCity: WeatherHours) {
+    func saveDataCityWeatherHourly(from weatherHourly: WeatherHours) {
         self.persistentContainer.performBackgroundTask {[weak self] context in
-            self?.deleteObjHourlyFromCoreData(context: context)
-            self?.saveDataHoursToCoreData(weatherHourly: weatherCity, context: context)
+          //  self?.deleteObjHourlyFromCoreData(context: context)
+            self?.saveDataHoursToCoreData(hourly: weatherHourly, context: context)
             
             do {
                 try context.save()
-            } catch {
-                fatalError("weatherCity Error \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    func saveDataCityWeatherDayly(weatherCityDaily: WeatherDays) {
-        self.persistentContainer.performBackgroundTask {[weak self] context in
-            self?.deleteObjDaylyFromCoreData(context: context)
-            self?.saveDataDayToCoreData(weatherDayly: weatherCityDaily, context: context)
-            
-            do {
-                try context.save()
-               // print("\(String(describing: weatherCityDaily))")
             } catch {
                 fatalError("weatherCityDaily \(error.localizedDescription)")
             }
         }
     }
     
-    private func saveDataHoursToCoreData(weatherHourly: WeatherHours, context: NSManagedObjectContext) {
-        let cityEntity = WeatherCityHourly(context: context)
-        cityEntity.cityName = weatherHourly.city_name
-        cityEntity.date = Date()
+    func saveDataCityWeatherDaily(weatherDaily: WeatherDays) {
+        self.persistentContainer.performBackgroundTask {[weak self] context in
+            //self?.deleteObjDaylyFromCoreData(context: context)
+            self?.saveDataDayToCoreData(daily: weatherDaily, context: context)
+            
+            do {
+                try context.save()
+            } catch {
+                fatalError("weatherCityDaily \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func saveDataHoursToCoreData(hourly: WeatherHours, context: NSManagedObjectContext) {
+        let weatherHourly = WeatherHourly(context: context)
+        weatherHourly.cityName = hourly.city_name
+        weatherHourly.date = Date()
         
-        weatherHourly.hourly.forEach { dataHour in
+        hourly.hourly.forEach { dataHour in
             let hoursEntity = Hourly(context: context)
             hoursEntity.descriptionIcon = dataHour.weather.descriptionIcon
             hoursEntity.icon = dataHour.weather.icon
@@ -79,18 +78,18 @@ class CoreDataManager {
             hoursEntity.clouds = Int64(dataHour.clouds)
             hoursEntity.datetime = dataHour.datetime
             hoursEntity.rh = dataHour.rh
-            hoursEntity.weatherCity = cityEntity
+            hoursEntity.weatherCity = weatherHourly
         }
     }
     
     
-    private func saveDataDayToCoreData(weatherDayly: WeatherDays, context: NSManagedObjectContext) {
-        let weatherDaily = WeatherCityDaily(context: context)
-        weatherDaily.title = weatherDayly.city_name
-        weatherDaily.date = Date()
+    private func saveDataDayToCoreData(daily: WeatherDays, context: NSManagedObjectContext) {
+        let weatherDaily = WeatherDaily(context: context)
+        weatherDaily.cityName = daily.city_name
         
-        weatherDayly.daily.forEach { dataDay in
-            let dayEntity = Dayly(context: context)
+        weatherDaily.date = Date()
+        daily.daily.forEach { dataDay in
+            let dayEntity = Daily(context: context)
             dayEntity.icon = dataDay.weather.icon
             dayEntity.descriptionIcon = dataDay.weather.descriptionIcon
             dayEntity.rh = dataDay.rh
@@ -137,35 +136,54 @@ class CoreDataManager {
         }
     }
     
-//    func fetchWeatherHourly(complition: @escaping ([WeatherCityHourly]) -> Void) {
-//        var weatherHourly = [WeatherCityHourly]()
-//        let dispatchGroup = DispatchGroup()
-//
-//        dispatchGroup.enter()
-//        do {
-//            weatherHourly = try persistentContainer.viewContext.fetch(fetchResquestWeatherCity)
-//            dispatchGroup.notify(queue: .main) {
-//                complition(weatherHourly)
-//            }
-//        } catch {
-//            dispatchGroup.leave()
-//            print("\(error.localizedDescription)")
-//        }
-//    }
-//
-//    func fetchWeatherDaily(complition: @escaping ([WeatherCityDaily]) -> Void) {
-//        var weatherCityDaily = [WeatherCityDaily]()
-//        let dispatchGroup = DispatchGroup()
-//
-//        dispatchGroup.enter()
-//        do {
-//            weatherCityDaily = try persistentContainer.viewContext.fetch(fetchRequestWeatherDaily)
-//            dispatchGroup.notify(queue: .main) {
-//                complition(weatherCityDaily)
-//            }
-//        } catch {
-//            dispatchGroup.leave()
-//            print("\(error.localizedDescription)")
-//        }
-//    }
+    func fetchWeatherHourly(completionHandler: @escaping ([WeatherHourly], [WeatherDaily]) -> Void) {
+        var weatherHourly = [WeatherHourly]()
+        var weatheDaily = [WeatherDaily]()
+        
+        fetchResquestWeatherDaily.sortDescriptors = [NSSortDescriptor(key: #keyPath(WeatherDaily.date), ascending: true)]
+        fetchResquesWeatherHourly.sortDescriptors = [NSSortDescriptor(key: #keyPath(WeatherHourly.date), ascending: true)]
+        
+        do {
+            let resultHourly = try persistentContainer.viewContext.fetch(fetchResquesWeatherHourly)
+            let resultDaily = try persistentContainer.viewContext.fetch(fetchResquestWeatherDaily)
+            
+            print(resultHourly.count)
+            
+            weatherHourly = resultHourly
+            weatheDaily = resultDaily
+        } catch {
+            print("\(error.localizedDescription)")
+        }
+        
+        completionHandler(weatherHourly, weatheDaily)
+    }
+    
+    func fetchAllHourly(hourly: WeatherHourly) -> [Hourly] {
+        fetchResquestHour.predicate = NSPredicate(format: "weatherCity = %@", hourly)
+        fetchResquestHour.sortDescriptors = [NSSortDescriptor(key: #keyPath(Hourly.datetime), ascending: true)]
+        
+        var hourly: [Hourly] = []
+        
+        do {
+            hourly = try persistentContainer.viewContext.fetch(fetchResquestHour)
+        } catch {
+            print(error.localizedDescription)
+        }
+        return hourly
+    }
+    
+    func fetchAllDaily(daily: WeatherDaily) -> [Daily] {
+        fetchResquestDay.predicate = NSPredicate(format: "weatherDaily = %@", daily)
+        fetchResquestDay.sortDescriptors = [NSSortDescriptor(key: #keyPath(Daily.datetime), ascending: true)]
+        
+        var daily: [Daily] = []
+        
+        do {
+            daily = try persistentContainer.viewContext.fetch(fetchResquestDay)
+        } catch {
+            print(error.localizedDescription)
+        }
+        return daily
+    }
+
 }

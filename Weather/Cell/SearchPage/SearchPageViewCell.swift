@@ -57,7 +57,7 @@ class SearchPageViewCell: UICollectionViewCell {
         }
     }
     
-    func setUp(with day: Dayly) {
+    func setUp(with day: Daily) {
         dayLabel.text = day.datetime!.toDay
         if day.pop == 0 {
             popLabel.text = " "
