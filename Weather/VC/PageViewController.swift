@@ -1,9 +1,16 @@
 
 import UIKit
 import SnapKit
+import Combine
+import CoreData
 
 class PageViewController: UIPageViewController {
     weak var coordinator: HomePageCoordinator?
+    
+    var cancelled = Set<AnyCancellable>()
+    
+    var weatherHourly: [WeatherHourly] = []
+    var weatherDaily: [WeatherDaily] = []
     
     var weatherViewModel: WeatherViewModel!
     var pendingPage: Int?
@@ -18,6 +25,8 @@ class PageViewController: UIPageViewController {
     lazy var weatherVC: [WeatherController] = {
         var weather = [WeatherController]()
         CoreDataManager.shared.fetchWeatherHourly { hourly, daily in
+            self.weatherHourly = hourly
+            self.weatherDaily = daily
             for (hourly, daily) in zip(hourly, daily) {
                 weather.append(WeatherController(weather: Weather(hourly: hourly, daily: daily)))
             }
@@ -42,29 +51,36 @@ class PageViewController: UIPageViewController {
         return emptyPage
     }()
     
+    lazy var deleteCity: UIBarButtonItem = {
+        let delete = UIBarButtonItem(image: UIImage(systemName: "trash.circle"), style: .plain, target: self, action: #selector(deleteweather))
+        
+        delete.tintColor = .black
+        return delete
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         pageControler.numberOfPages = weatherVC.count
         pageControler.currentPage = 0
         configuration()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(contextDidSave(_:)), name: Notification.Name.NSManagedObjectContextDidSave, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        print(#function)
     }
     
     override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]? = nil) {
         super.init(transitionStyle: .scroll, navigationOrientation: navigationOrientation)
-        
-        DispatchQueue.main.async {
-            print("OKOKOK")
-        }
+    
         if weatherVC.count == 0 {
             emptyPageLabel.isHidden = false
+            deleteCity.isHidden = true
         } else {
             emptyPageLabel.isHidden = true
+            deleteCity.isHidden = false
             setViewControllers([weatherVC[0]], direction: .forward, animated: true)
         }
     }
@@ -81,10 +97,11 @@ class PageViewController: UIPageViewController {
         view.addSubview(emptyPageLabel)
         view.addSubview(pageControler)
         view.bringSubviewToFront(pageControler)
-        
-        let addCity = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewCity))
+    
+        let addCity = UIBarButtonItem(image: UIImage(systemName: "plus.circle"), style: .plain, target: self, action: #selector(addNewCity))
         addCity.tintColor = .black
-        navigationItem.rightBarButtonItem = addCity
+        
+        navigationItem.rightBarButtonItems = [addCity, deleteCity]
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: parameterIcon)
         
@@ -106,11 +123,6 @@ class PageViewController: UIPageViewController {
             let addAction = UIAlertAction(title: "Search", style: .default) { _ in
                 guard let text = alert.textFields?[0].text else { return }
                 self.weatherViewModel = WeatherViewModel(address: text)
-//                CoreDataManager.shared.fetchWeatherHourly { hourly, daily in
-//                    for (hourly, daily) in zip(hourly, daily) {
-//                        self.weatherVC.append(WeatherController(weather: Weather(hourly: hourly, daily: daily)))
-//                    }
-//                }
             }
             
             let cancelAction = UIAlertAction(title: "Cancel", style: .destructive)
@@ -123,6 +135,28 @@ class PageViewController: UIPageViewController {
         coordinator?.paramatrPage()
     }
     
+    @objc private func contextDidSave(_ notification: Notification) {
+        if let insertedObjects = notification.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject>, !insertedObjects.isEmpty {
+                print(insertedObjects)
+            }
+    }
+    
+    @objc private func deleteweather() {
+        let weather = Weather(hourly: weatherHourly[pendingPage ?? 0], daily: weatherDaily[pendingPage ?? 0])
+        let alert = UIAlertController(title: "Delete \(weather.daily.cityName ?? "")", message: "Do you want to delete this city", preferredStyle: .alert)
+          
+        let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { _ in
+            CoreDataManager.shared.remvoveweather(weather: weather)
+        }
+            
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default)
+            
+        alert.addAction(cancelAction)
+        alert.addAction(deleteAction)
+            
+        present(alert, animated: true)
+        
+    }
 }
 
 extension PageViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
@@ -161,5 +195,5 @@ extension PageViewController: UIPageViewControllerDelegate, UIPageViewController
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         guard completed, let page = pendingPage else { return }
         pageControler.currentPage = page
-        }
+    }
 }

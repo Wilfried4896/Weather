@@ -146,11 +146,10 @@ class CoreDataManager {
         do {
             let resultHourly = try persistentContainer.viewContext.fetch(fetchResquesWeatherHourly)
             let resultDaily = try persistentContainer.viewContext.fetch(fetchResquestWeatherDaily)
-            
-            print(resultHourly.count)
-            
+                
             weatherHourly = resultHourly
             weatheDaily = resultDaily
+            
         } catch {
             print("\(error.localizedDescription)")
         }
@@ -185,5 +184,15 @@ class CoreDataManager {
         }
         return daily
     }
-
+    
+    func remvoveweather(weather: Weather) {
+        persistentContainer.viewContext.delete(weather.hourly)
+        persistentContainer.viewContext.delete(weather.daily)
+        
+        do {
+            try persistentContainer.viewContext.save()
+        } catch {
+            fatalError("weatherCityDaily \(error.localizedDescription)")
+        }
+    }
 }

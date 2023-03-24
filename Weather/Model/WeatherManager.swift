@@ -46,7 +46,7 @@ class WeatherManager {
         guard let url = URL(string: urlString) else { return }
     
         let headers = [
-            "X-RapidAPI-Key": "cc5ac6e99fmsh34a47779a346706p15d5c3jsnf28181f9193b",
+            "X-RapidAPI-Key": "f7b1c3f286msh769eba7c71bdabdp100fbbjsn94b56fd20a55",
             "X-RapidAPI-Host": "weatherbit-v1-mashape.p.rapidapi.com"
         ]
         
@@ -77,7 +77,6 @@ class WeatherManager {
             } receiveValue: { hourly in
                 self.stateHourly = .success(weatherHourly: hourly)
                 self.hourly = hourly
-//                NotificationCenter.default.post(name: NSNotification.Name("weatherHourly"), object: hourly)
             }
             .store(in: &cancelled)
     }
@@ -90,7 +89,7 @@ class WeatherManager {
         guard let url = URL(string: urlString) else { return }
     
         let headers = [
-            "X-RapidAPI-Key": "cc5ac6e99fmsh34a47779a346706p15d5c3jsnf28181f9193b",
+            "X-RapidAPI-Key": "f7b1c3f286msh769eba7c71bdabdp100fbbjsn94b56fd20a55",
             "X-RapidAPI-Host": "weatherbit-v1-mashape.p.rapidapi.com"
         ]
         
